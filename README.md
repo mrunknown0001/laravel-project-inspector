@@ -7,6 +7,7 @@ the stack and versions, dependency problems, routes and their access control, co
 database schema, security risks, architecture and code quality. It can also ask an AI model to
 explain the results.
 
+[![Tests](https://github.com/mrunknown0001/laravel-project-inspector/actions/workflows/tests.yml/badge.svg)](https://github.com/mrunknown0001/laravel-project-inspector/actions/workflows/tests.yml)
 ![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777BB4)
 ![Laravel 8 to 13](https://img.shields.io/badge/Laravel-8%E2%80%9313-FF2D20)
 ![PHPStan level 8](https://img.shields.io/badge/PHPStan-level%208-brightgreen)
