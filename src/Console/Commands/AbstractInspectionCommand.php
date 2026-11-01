@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaraInspect\Console\Commands;
 
+use LaraInspect\Console\ConsoleConfirmation;
 use LaraInspect\Contracts\AnalyzerInterface;
 use LaraInspect\Exception\InspectorException;
 use LaraInspect\Model\InspectionReport;
@@ -47,6 +48,16 @@ abstract class AbstractInspectionCommand extends Command
         return null;
     }
 
+    /**
+     * Whether this command can run analyzers that use routes (and so --use-artisan applies).
+     */
+    protected function usesRoutes(): bool
+    {
+        $fixed = $this->fixedAnalyzers();
+
+        return $fixed === null || array_intersect($fixed, ['routes', 'security', 'architecture']) !== [];
+    }
+
     protected function defaultFormat(): string
     {
         return ReporterRegistry::CONSOLE;
@@ -69,6 +80,13 @@ abstract class AbstractInspectionCommand extends Command
             $names = implode(', ', $this->services->analyzers()->names());
             $this->addOption('only', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Run only these analyzers (comma-separated or repeated): ' . $names);
             $this->addOption('exclude', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Skip these analyzers (comma-separated or repeated)');
+        }
+
+        if ($this->usesRoutes()) {
+            $this->addOption('use-artisan', null, InputOption::VALUE_NONE, 'List routes with "php artisan route:list" (boots the project; asks for confirmation)');
+        }
+        if ($this->fixedAnalyzers() === null) {
+            $this->addOption('run-quality-tools', null, InputOption::VALUE_OPTIONAL, 'Run code-quality tools in report-only mode (all, or a list: ' . implode(',', \LaraInspect\Analyzers\CodeQualityAnalyzer::RUNNABLE) . '); asks for confirmation', false);
         }
 
         $this
@@ -128,7 +146,12 @@ abstract class AbstractInspectionCommand extends Command
             $audit->setFile($store->auditLogPath());
         }
 
-        $context = $services->createContext($guard, $services->options((bool) $input->getOption('offline')), $audit, $redactor);
+        $options = $services->options(
+            (bool) $input->getOption('offline'),
+            $input->hasOption('use-artisan') && (bool) $input->getOption('use-artisan'),
+            $this->qualityTools($input),
+        );
+        $context = $services->createContext($guard, $options, $audit, $redactor, new ConsoleConfirmation($input, $io));
         if (!$context->project->isLaravel) {
             $reasons = $context->project->warnings !== [] ? ' ' . implode(' ', $context->project->warnings) : '';
             throw new InspectorException(sprintf('"%s" is not a Laravel application.%s', $guard->root(), $reasons));
@@ -190,6 +213,29 @@ abstract class AbstractInspectionCommand extends Command
         return $threshold !== null && $highest !== null && $highest->isAtLeast($threshold)
             ? self::EXIT_FINDINGS
             : Command::SUCCESS;
+    }
+
+    /**
+     * --run-quality-tools          => ['all']
+     * --run-quality-tools=pint,phpstan => ['pint', 'phpstan']
+     * (option absent)              => []
+     *
+     * @return list<string>
+     */
+    private function qualityTools(InputInterface $input): array
+    {
+        if (!$input->hasOption('run-quality-tools')) {
+            return [];
+        }
+        $value = $input->getOption('run-quality-tools');
+        if ($value === false) {
+            return [];
+        }
+        if ($value === null || $value === '') {
+            return ['all'];
+        }
+
+        return array_values(array_filter(array_map(static fn (string $t): string => strtolower(trim($t)), explode(',', (string) $value))));
     }
 
     /**

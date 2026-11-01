@@ -64,6 +64,31 @@ final class ConfigReader
     }
 
     /**
+     * Items of a literal array, e.g. list("cors", "allowed_origins"); null if the
+     * value is missing or not a literal array.
+     *
+     * @return list<ConfigValue>|null
+     */
+    public function list(string $file, string $keyPath): ?array
+    {
+        $root = $this->root($file);
+        if (is_string($root)) {
+            return null;
+        }
+        $node = $this->find($root, $keyPath);
+        if (!$node instanceof Expr\Array_) {
+            return null;
+        }
+        $origin = self::path($file) . ':' . $keyPath;
+        $items = [];
+        foreach ($node->items as $item) {
+            $items[] = $this->resolve($item->value, $origin);
+        }
+
+        return $items;
+    }
+
+    /**
      * Keys of the array at a path, e.g. keys("database", "connections").
      *
      * @return list<string>

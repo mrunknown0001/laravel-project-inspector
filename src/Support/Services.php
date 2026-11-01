@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace LaraInspect\Support;
 
+use LaraInspect\Analyzers\ArchitectureAnalyzer;
+use LaraInspect\Analyzers\CodeQualityAnalyzer;
+use LaraInspect\Analyzers\ConfigurationAnalyzer;
+use LaraInspect\Analyzers\DatabaseAnalyzer;
 use LaraInspect\Analyzers\DependencyAnalyzer;
 use LaraInspect\Analyzers\EnvironmentAnalyzer;
+use LaraInspect\Analyzers\RouteAnalyzer;
+use LaraInspect\Analyzers\SecurityAnalyzer;
 use LaraInspect\Core\AnalyzerRegistry;
 use LaraInspect\Core\InspectionContext;
 use LaraInspect\Core\InspectionOptions;
 use LaraInspect\Core\Inspector;
 use LaraInspect\Core\ProjectDetector;
 use LaraInspect\Process\AuditLog;
+use LaraInspect\Process\ConfirmationInterface;
+use LaraInspect\Process\DenyAllConfirmation;
 use LaraInspect\Process\ProcessRunnerInterface;
 use LaraInspect\Process\SafeProcessRunner;
 use LaraInspect\Reports\ReporterRegistry;
@@ -62,6 +70,12 @@ final class Services
         return new AnalyzerRegistry([
             new EnvironmentAnalyzer(),
             new DependencyAnalyzer(),
+            new RouteAnalyzer(),
+            new ConfigurationAnalyzer(),
+            new DatabaseAnalyzer(),
+            new SecurityAnalyzer(),
+            new ArchitectureAnalyzer(),
+            new CodeQualityAnalyzer(),
         ]);
     }
 
@@ -70,12 +84,17 @@ final class Services
         return ReporterRegistry::default();
     }
 
-    public function options(bool $offline): InspectionOptions
+    /**
+     * @param list<string> $qualityTools
+     */
+    public function options(bool $offline, bool $useArtisan = false, array $qualityTools = []): InspectionOptions
     {
         return new InspectionOptions(
             offline: $offline,
             processTimeout: $this->config->int('process_timeout', 60),
             networkTimeout: $this->config->int('network_process_timeout', 180),
+            useArtisan: $useArtisan,
+            qualityTools: $qualityTools,
         );
     }
 
@@ -84,7 +103,7 @@ final class Services
         return PathGuard::forDirectory($path);
     }
 
-    public function createContext(PathGuard $guard, InspectionOptions $options, AuditLog $audit, SecretRedactor $redactor): InspectionContext
+    public function createContext(PathGuard $guard, InspectionOptions $options, AuditLog $audit, SecretRedactor $redactor, ConfirmationInterface $confirmation = new DenyAllConfirmation()): InspectionContext
     {
         $files = new SafeFileReader(
             $guard,
@@ -93,7 +112,7 @@ final class Services
         );
         $runner = $this->processRunnerFactory !== null
             ? ($this->processRunnerFactory)($audit, $options)
-            : new SafeProcessRunner($audit, $options->processTimeout, offline: $options->offline);
+            : new SafeProcessRunner($audit, $options->processTimeout, $confirmation, $options->offline);
 
         return new InspectionContext(
             (new ProjectDetector())->detect($files),

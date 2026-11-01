@@ -1,0 +1,2075 @@
+{
+    "schema_version": 1,
+    "inspector_version": "0.1.0",
+    "generated_at": "2026-11-01T13:29:18+00:00",
+    "duration_ms": 5356,
+    "offline": false,
+    "project": {
+        "root": "/path/to/laravel-8",
+        "name": "fixture/laravel-8-app",
+        "is_laravel": true,
+        "framework": "laravel",
+        "laravel_version": "8.83.27",
+        "laravel_major": 8,
+        "version_source": "detected",
+        "version_origin": "composer.lock",
+        "layout": "legacy",
+        "markers": {
+            "artisan": true,
+            "composer.json": true,
+            "composer.lock": true,
+            "bootstrap/app.php": true,
+            "app": true,
+            "routes": true,
+            "config": true
+        },
+        "warnings": []
+    },
+    "summary": {
+        "findings": 16,
+        "by_severity": {
+            "CRITICAL": 1,
+            "HIGH": 3,
+            "MEDIUM": 2,
+            "LOW": 4,
+            "INFO": 6
+        },
+        "analyzers": [
+            {
+                "analyzer": "environment",
+                "status": "completed"
+            },
+            {
+                "analyzer": "dependencies",
+                "status": "completed"
+            },
+            {
+                "analyzer": "routes",
+                "status": "completed"
+            },
+            {
+                "analyzer": "configuration",
+                "status": "completed"
+            },
+            {
+                "analyzer": "database",
+                "status": "completed"
+            },
+            {
+                "analyzer": "security",
+                "status": "completed"
+            },
+            {
+                "analyzer": "architecture",
+                "status": "completed"
+            },
+            {
+                "analyzer": "quality",
+                "status": "completed"
+            }
+        ]
+    },
+    "results": [
+        {
+            "analyzer": "environment",
+            "title": "Environment",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Laravel version",
+                    "value": "8.83.27",
+                    "source": "detected",
+                    "origin": "composer.lock"
+                },
+                {
+                    "label": "Project layout",
+                    "value": "Classic (HTTP/Console kernels)",
+                    "source": "inferred",
+                    "origin": "bootstrap/app.php, app/Http/Kernel.php"
+                },
+                {
+                    "label": "Laravel support status",
+                    "value": "End of life (security fixes ended 2023-01-24)",
+                    "source": "detected",
+                    "origin": "https://laravel.com/docs/releases#support-policy"
+                },
+                {
+                    "label": "PHP requirement",
+                    "value": "^7.3|^8.0",
+                    "source": "detected",
+                    "origin": "composer.json"
+                },
+                {
+                    "label": "PHP running the inspector",
+                    "value": "8.3.32",
+                    "source": "detected",
+                    "origin": "~/.local/bin/php-static"
+                },
+                {
+                    "label": "Composer version",
+                    "value": "2.10.3",
+                    "source": "detected",
+                    "origin": "composer --version --no-ansi"
+                },
+                {
+                    "label": "Node.js version",
+                    "value": "22.23.3",
+                    "source": "detected",
+                    "origin": "node --version"
+                },
+                {
+                    "label": "npm version",
+                    "value": "10.9.9",
+                    "source": "detected",
+                    "origin": "npm --version"
+                },
+                {
+                    "label": "pnpm version",
+                    "value": "Not installed",
+                    "source": "detected",
+                    "origin": "PATH lookup"
+                },
+                {
+                    "label": "Yarn version",
+                    "value": "Not installed",
+                    "source": "detected",
+                    "origin": "PATH lookup"
+                },
+                {
+                    "label": "Bun version",
+                    "value": "Not installed",
+                    "source": "detected",
+                    "origin": "PATH lookup"
+                },
+                {
+                    "label": "Application environment",
+                    "value": "production",
+                    "source": "detected",
+                    "origin": ".env: APP_ENV"
+                },
+                {
+                    "label": "Debug mode",
+                    "value": "true",
+                    "source": "detected",
+                    "origin": ".env: APP_DEBUG"
+                },
+                {
+                    "label": "Database technology",
+                    "value": "MySQL",
+                    "source": "detected",
+                    "origin": "config/database.php"
+                },
+                {
+                    "label": "Frontend build tool",
+                    "value": "Laravel Mix",
+                    "source": "detected",
+                    "origin": "webpack.mix.js"
+                },
+                {
+                    "label": "Frontend package manager",
+                    "value": "npm",
+                    "source": "detected",
+                    "origin": "package-lock.json"
+                },
+                {
+                    "label": "Frontend technologies",
+                    "value": "Vue",
+                    "source": "detected",
+                    "origin": "package.json, composer.json"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Infrastructure drivers",
+                    "headers": [
+                        "Setting",
+                        "Value",
+                        "Source",
+                        "Origin"
+                    ],
+                    "rows": [
+                        [
+                            "Database connection",
+                            "mysql",
+                            "detected",
+                            ".env: DB_CONNECTION"
+                        ],
+                        [
+                            "Cache store",
+                            "redis",
+                            "detected",
+                            ".env: CACHE_DRIVER"
+                        ],
+                        [
+                            "Queue connection",
+                            "redis",
+                            "detected",
+                            ".env: QUEUE_CONNECTION"
+                        ],
+                        [
+                            "Session driver",
+                            "redis",
+                            "detected",
+                            ".env: SESSION_DRIVER"
+                        ],
+                        [
+                            "Log channel",
+                            "stack",
+                            "inferred",
+                            "config/logging.php:default (env('LOG_CHANNEL') default)"
+                        ],
+                        [
+                            "Filesystem disk",
+                            "local",
+                            "inferred",
+                            "config/filesystems.php:default (env('FILESYSTEM_DRIVER') default)"
+                        ],
+                        [
+                            "Mailer",
+                            "smtp",
+                            "detected",
+                            ".env: MAIL_MAILER"
+                        ],
+                        [
+                            "Broadcast connection",
+                            "null",
+                            "inferred",
+                            "config/broadcasting.php:default (env('BROADCAST_DRIVER') default)"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [
+                {
+                    "id": "env.laravel-end-of-life",
+                    "title": "Laravel 8 no longer receives security fixes",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "component": "composer.lock",
+                    "explanation": "Vulnerabilities discovered in this Laravel version will not be patched upstream. This is a maintenance risk, not proof of a current vulnerability.",
+                    "evidence": "Laravel 8 security support ended on 2023-01-24 (https://laravel.com/docs/releases#support-policy).",
+                    "remediation": "Plan an upgrade to a supported Laravel release. Upgrade one major version at a time, following the official upgrade guides.",
+                    "analyzer": "environment"
+                }
+            ],
+            "notes": [],
+            "data": {
+                "laravel": {
+                    "version": "8.83.27",
+                    "major": 8,
+                    "layout": "legacy"
+                },
+                "php": {
+                    "requirement": "^7.3|^8.0",
+                    "platform_override": null,
+                    "runtime": "8.3.32"
+                },
+                "tools": {
+                    "Composer": "2.10.3",
+                    "Node.js": "22.23.3",
+                    "npm": "10.9.9",
+                    "pnpm": null,
+                    "Yarn": null,
+                    "Bun": null
+                },
+                "app": {
+                    "environment": "production",
+                    "debug": "true"
+                },
+                "drivers": {
+                    "database": "mysql",
+                    "cache": "redis",
+                    "queue": "redis",
+                    "session": "redis",
+                    "log": "stack",
+                    "filesystem": "local",
+                    "mail": "smtp",
+                    "broadcast": "null"
+                },
+                "database_technology": "MySQL",
+                "frontend": {
+                    "build_tool": "Laravel Mix",
+                    "build_tool_origin": "webpack.mix.js",
+                    "package_manager": "npm",
+                    "package_manager_origin": "package-lock.json",
+                    "technologies": [
+                        "Vue"
+                    ]
+                }
+            }
+        },
+        {
+            "analyzer": "dependencies",
+            "title": "Dependencies",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Direct dependencies",
+                    "value": "4",
+                    "source": "detected",
+                    "origin": "composer.json require"
+                },
+                {
+                    "label": "Direct development dependencies",
+                    "value": "2",
+                    "source": "detected",
+                    "origin": "composer.json require-dev"
+                },
+                {
+                    "label": "composer.lock",
+                    "value": "Present",
+                    "source": "detected",
+                    "origin": "composer.lock"
+                },
+                {
+                    "label": "Locked packages",
+                    "value": "7 (5 production, 2 development)",
+                    "source": "detected",
+                    "origin": "composer.lock"
+                },
+                {
+                    "label": "Installed in vendor/",
+                    "value": "Not installed",
+                    "source": "detected",
+                    "origin": "vendor/composer/installed.json"
+                },
+                {
+                    "label": "Minimum stability",
+                    "value": "dev",
+                    "source": "detected",
+                    "origin": "composer.json"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Platform requirements",
+                    "headers": [
+                        "Requirement",
+                        "Constraint"
+                    ],
+                    "rows": [
+                        [
+                            "php",
+                            "^7.3|^8.0"
+                        ]
+                    ]
+                },
+                {
+                    "title": "Direct dependencies",
+                    "headers": [
+                        "Package",
+                        "Constraint",
+                        "Locked version",
+                        "Scope"
+                    ],
+                    "rows": [
+                        [
+                            "fruitcake/laravel-cors",
+                            "^2.0",
+                            "v2.2.0",
+                            "production"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "^7.0.1",
+                            "7.5.0",
+                            "production"
+                        ],
+                        [
+                            "laravel/framework",
+                            "^8.75",
+                            "v8.83.27",
+                            "production"
+                        ],
+                        [
+                            "laravel/sanctum",
+                            "^2.11",
+                            "v2.15.1",
+                            "production"
+                        ],
+                        [
+                            "facade/ignition",
+                            "^2.5",
+                            "2.17.7",
+                            "development"
+                        ],
+                        [
+                            "phpunit/phpunit",
+                            "^9.5.10",
+                            "9.5.28",
+                            "development"
+                        ]
+                    ]
+                },
+                {
+                    "title": "Security advisories",
+                    "headers": [
+                        "Package",
+                        "Advisory",
+                        "Severity",
+                        "Affected versions",
+                        "Title"
+                    ],
+                    "rows": [
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-69246",
+                            "HIGH",
+                            ">=8.0.0,<8.0.1|<7.15.2",
+                            "Guzzle: Noncanonical host can bypass host-based checks"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-69245",
+                            "MEDIUM",
+                            ">=8.0.0,<8.0.1|<7.15.2",
+                            "Guzzle: Noncanonical cookie domain keeps subdomain scope"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-67354",
+                            "MEDIUM",
+                            "<7.15.1",
+                            "Guzzle: URI fragments disclosed in redirect Referer headers"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-67355",
+                            "MEDIUM",
+                            "<7.15.1",
+                            "Guzzle: Host-only cookie scope is not preserved"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-67353",
+                            "MEDIUM",
+                            "<7.15.1",
+                            "Guzzle: Unbounded response cookies risk denial of service"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-59883",
+                            "MEDIUM",
+                            "<7.12.3",
+                            "Guzzle: Cookie Disclosure and Injection via IP-Address Domains"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-67339",
+                            "MEDIUM",
+                            "<7.14.2",
+                            "Guzzle: Proxy-Authorization headers can be sent to origin servers"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-55767",
+                            "MEDIUM",
+                            "<7.12.1",
+                            "Dot-only cookie domains match all hosts"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "CVE-2026-55568",
+                            "MEDIUM",
+                            "<7.12.1",
+                            "Silent HTTPS proxy downgrade to cleartext"
+                        ],
+                        [
+                            "laravel/framework",
+                            "CVE-2026-114509",
+                            "CRITICAL",
+                            "<12.68.0|>=13.0.0,<13.29.0",
+                            "Laravel TokenGuard authentication bypass through non-string API credentials"
+                        ],
+                        [
+                            "laravel/framework",
+                            "CVE-2026-102279",
+                            "LOW",
+                            ">=13.0.0,<13.30.0|<12.69.0",
+                            "Laravel: XSS in Debug Page Information"
+                        ],
+                        [
+                            "laravel/framework",
+                            "PKSA-m5cs-t1y6-qpcs",
+                            "MEDIUM",
+                            "<12.61.1|>=13.0.0,<13.12.0",
+                            "Laravel Framework: Temporary Signed URL Path Confusion"
+                        ],
+                        [
+                            "laravel/framework",
+                            "PKSA-3r5d-mb8f-1qw9",
+                            "HIGH",
+                            "<12.60.0|>=13.0.0,<=13.9.0",
+                            "Laravel Framework: CRLF injection in default email rule "
+                        ],
+                        [
+                            "laravel/framework",
+                            "CVE-2025-27515",
+                            "MEDIUM",
+                            "<10.48.29|>=11.0.0,<11.44.1|>=12.0.0,<12.1.1",
+                            "Laravel has a File Validation Bypass"
+                        ],
+                        [
+                            "laravel/framework",
+                            "CVE-2024-52301",
+                            "HIGH",
+                            "<6.20.45|>=7.0.0,<7.30.7|>=8.0.0,<8.83.28|>=9.0.0,<9.52.17|>=10.0.0,<10.48.23|>=11.0.0,<11.31.0",
+                            "Laravel environment manipulation via query string"
+                        ],
+                        [
+                            "phpunit/phpunit",
+                            "CVE-2026-24765",
+                            "HIGH",
+                            ">=0,<8.5.52|>=9.0.0,<9.6.33|>=10.0.0,<10.5.62|>=11.0.0,<11.5.50|>=12.0.0,<12.5.8",
+                            "Unsafe Deserialization in PHPT Code Coverage Handling"
+                        ]
+                    ]
+                },
+                {
+                    "title": "Outdated direct dependencies",
+                    "headers": [
+                        "Package",
+                        "Locked",
+                        "Latest",
+                        "Update type"
+                    ],
+                    "rows": [
+                        [
+                            "fruitcake/laravel-cors",
+                            "v2.2.0",
+                            "v3.0.0",
+                            "major"
+                        ],
+                        [
+                            "guzzlehttp/guzzle",
+                            "7.5.0",
+                            "8.3.1",
+                            "major"
+                        ],
+                        [
+                            "laravel/framework",
+                            "v8.83.27",
+                            "v13.39.0",
+                            "major"
+                        ],
+                        [
+                            "laravel/sanctum",
+                            "v2.15.1",
+                            "v4.3.3",
+                            "major"
+                        ],
+                        [
+                            "phpunit/phpunit",
+                            "9.5.28",
+                            "12.5.42",
+                            "major"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [
+                {
+                    "id": "deps.security-advisory",
+                    "title": "guzzlehttp/guzzle 7.5.0 has 9 known security advisories",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "component": "composer.lock: guzzlehttp/guzzle",
+                    "explanation": "The locked version falls within the affected range of published advisories. Whether the application is exploitable depends on how the package is used.",
+                    "evidence": "- CVE-2026-69246 (high): Guzzle: Noncanonical host can bypass host-based checks; affected >=8.0.0,<8.0.1|<7.15.2 (https://github.com/advisories/GHSA-v5mv-p594-2x33)\n- CVE-2026-69245 (medium): Guzzle: Noncanonical cookie domain keeps subdomain scope; affected >=8.0.0,<8.0.1|<7.15.2 (https://github.com/advisories/GHSA-f7vp-7xgx-4w4r)\n- CVE-2026-67354 (medium): Guzzle: URI fragments disclosed in redirect Referer headers; affected <7.15.1 (https://github.com/advisories/GHSA-h95v-h523-3mw8)\n- CVE-2026-67355 (medium): Guzzle: Host-only cookie scope is not preserved; affected <7.15.1 (https://github.com/advisories/GHSA-wm3w-8rrp-j577)\n- CVE-2026-67353 (medium): Guzzle: Unbounded response cookies risk denial of service; affected <7.15.1 (https://github.com/advisories/GHSA-f283-ghqc-fg79)\n- CVE-2026-59883 (medium): Guzzle: Cookie Disclosure and Injection via IP-Address Domains; affected <7.12.3 (https://github.com/advisories/GHSA-g446-98w2-8p5w)\n- CVE-2026-67339 (medium): Guzzle: Proxy-Authorization headers can be sent to origin servers; affected <7.14.2 (https://github.com/advisories/GHSA-94pj-82f3-465w)\n- CVE-2026-55767 (medium): Dot-only cookie domains match all hosts; affected <7.12.1 (https://github.com/guzzle/guzzle/security/advisories/GHSA-cwxw-98qj-8qjx)\n- CVE-2026-55568 (medium): Silent HTTPS proxy downgrade to cleartext; affected <7.12.1 (https://github.com/guzzle/guzzle/security/advisories/GHSA-wpwq-4j6v-78m3)",
+                    "remediation": "Update guzzlehttp/guzzle to a version outside the affected ranges (>=8.0.0,<8.0.1|<7.15.2; <7.15.1; <7.12.3; <7.14.2; <7.12.1), e.g. \"composer update guzzlehttp/guzzle\" in the project, then run the test suite.",
+                    "analyzer": "dependencies"
+                },
+                {
+                    "id": "deps.security-advisory",
+                    "title": "laravel/framework v8.83.27 has 6 known security advisories",
+                    "severity": "CRITICAL",
+                    "confidence": "confirmed",
+                    "component": "composer.lock: laravel/framework",
+                    "explanation": "The locked version falls within the affected range of published advisories. Whether the application is exploitable depends on how the package is used.",
+                    "evidence": "- CVE-2026-114509 (critical): Laravel TokenGuard authentication bypass through non-string API credentials; affected <12.68.0|>=13.0.0,<13.29.0 (https://github.com/advisories/GHSA-f9x3-7vq9-cph6)\n- CVE-2026-102279 (low): Laravel: XSS in Debug Page Information; affected >=13.0.0,<13.30.0|<12.69.0 (https://github.com/advisories/GHSA-jh5r-qr3c-85q8)\n- PKSA-m5cs-t1y6-qpcs (medium): Laravel Framework: Temporary Signed URL Path Confusion; affected <12.61.1|>=13.0.0,<13.12.0 (https://github.com/advisories/GHSA-crmm-hgp2-wgrp)\n- PKSA-3r5d-mb8f-1qw9 (high): Laravel Framework: CRLF injection in default email rule ; affected <12.60.0|>=13.0.0,<=13.9.0 (https://github.com/advisories/GHSA-5vg9-5847-vvmq)\n- CVE-2025-27515 (medium): Laravel has a File Validation Bypass; affected <10.48.29|>=11.0.0,<11.44.1|>=12.0.0,<12.1.1 (https://github.com/advisories/GHSA-78fx-h6xr-vch4)\n- CVE-2024-52301 (high): Laravel environment manipulation via query string; affected <6.20.45|>=7.0.0,<7.30.7|>=8.0.0,<8.83.28|>=9.0.0,<9.52.17|>=10.0.0,<10.48.23|>=11.0.0,<11.31.0 (https://github.com/advisories/GHSA-gv7v-rgg6-548h)",
+                    "remediation": "Update laravel/framework to a version outside the affected ranges (<12.68.0|>=13.0.0,<13.29.0; >=13.0.0,<13.30.0|<12.69.0; <12.61.1|>=13.0.0,<13.12.0; <12.60.0|>=13.0.0,<=13.9.0; <10.48.29|>=11.0.0,<11.44.1|>=12.0.0,<12.1.1; <6.20.45|>=7.0.0,<7.30.7|>=8.0.0,<8.83.28|>=9.0.0,<9.52.17|>=10.0.0,<10.48.23|>=11.0.0,<11.31.0), e.g. \"composer update laravel/framework\" in the project, then run the test suite.",
+                    "analyzer": "dependencies"
+                },
+                {
+                    "id": "deps.security-advisory",
+                    "title": "phpunit/phpunit 9.5.28 has 1 known security advisory",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "component": "composer.lock: phpunit/phpunit",
+                    "explanation": "The locked version falls within the affected range of published advisories. This is a development dependency, which normally is not deployed to production. Whether the application is exploitable depends on how the package is used.",
+                    "evidence": "- CVE-2026-24765 (high): Unsafe Deserialization in PHPT Code Coverage Handling; affected >=0,<8.5.52|>=9.0.0,<9.6.33|>=10.0.0,<10.5.62|>=11.0.0,<11.5.50|>=12.0.0,<12.5.8 (https://github.com/sebastianbergmann/phpunit/security/advisories/GHSA-vvj3-c3rp-c85p)",
+                    "remediation": "Update phpunit/phpunit to a version outside the affected ranges (>=0,<8.5.52|>=9.0.0,<9.6.33|>=10.0.0,<10.5.62|>=11.0.0,<11.5.50|>=12.0.0,<12.5.8), e.g. \"composer update phpunit/phpunit\" in the project, then run the test suite.",
+                    "analyzer": "dependencies"
+                },
+                {
+                    "id": "deps.abandoned",
+                    "title": "fruitcake/laravel-cors is abandoned",
+                    "severity": "LOW",
+                    "confidence": "confirmed",
+                    "component": "composer.lock: fruitcake/laravel-cors",
+                    "explanation": "The maintainers have marked this package as abandoned. It will not receive bug or security fixes.",
+                    "evidence": "fruitcake/laravel-cors v2.2.0 is marked abandoned.",
+                    "remediation": "Find a maintained alternative to fruitcake/laravel-cors, or plan to remove it.",
+                    "analyzer": "dependencies"
+                },
+                {
+                    "id": "deps.abandoned",
+                    "title": "swiftmailer/swiftmailer is abandoned",
+                    "severity": "LOW",
+                    "confidence": "confirmed",
+                    "component": "composer.lock: swiftmailer/swiftmailer",
+                    "explanation": "The maintainers have marked this package as abandoned. It will not receive bug or security fixes.",
+                    "evidence": "swiftmailer/swiftmailer v6.3.0 is marked abandoned; suggested replacement: symfony/mailer.",
+                    "remediation": "Migrate from swiftmailer/swiftmailer to symfony/mailer.",
+                    "analyzer": "dependencies"
+                },
+                {
+                    "id": "deps.abandoned",
+                    "title": "facade/ignition is abandoned",
+                    "severity": "INFO",
+                    "confidence": "confirmed",
+                    "component": "composer.lock: facade/ignition",
+                    "explanation": "The maintainers have marked this development package as abandoned. It will not receive bug or security fixes.",
+                    "evidence": "facade/ignition 2.17.7 is marked abandoned; suggested replacement: spatie/laravel-ignition.",
+                    "remediation": "Migrate from facade/ignition to spatie/laravel-ignition.",
+                    "analyzer": "dependencies"
+                },
+                {
+                    "id": "deps.outdated-major",
+                    "title": "5 direct dependencies are behind a major release",
+                    "severity": "INFO",
+                    "confidence": "confirmed",
+                    "component": "composer.json",
+                    "explanation": "Newer major versions exist. Staying far behind makes future upgrades and security patches harder. Major updates may include breaking changes.",
+                    "evidence": "- fruitcake/laravel-cors v2.2.0 -> v3.0.0\n- guzzlehttp/guzzle 7.5.0 -> 8.3.1\n- laravel/framework v8.83.27 -> v13.39.0\n- laravel/sanctum v2.15.1 -> v4.3.3\n- phpunit/phpunit 9.5.28 -> 12.5.42",
+                    "remediation": "Review the changelogs and upgrade guides, then update one package at a time.",
+                    "analyzer": "dependencies"
+                }
+            ],
+            "notes": [],
+            "data": {
+                "require": {
+                    "php": "^7.3|^8.0",
+                    "fruitcake/laravel-cors": "^2.0",
+                    "guzzlehttp/guzzle": "^7.0.1",
+                    "laravel/framework": "^8.75",
+                    "laravel/sanctum": "^2.11"
+                },
+                "require_dev": {
+                    "facade/ignition": "^2.5",
+                    "phpunit/phpunit": "^9.5.10"
+                },
+                "locked": {
+                    "fruitcake/laravel-cors": {
+                        "version": "v2.2.0",
+                        "dev": false
+                    },
+                    "guzzlehttp/guzzle": {
+                        "version": "7.5.0",
+                        "dev": false
+                    },
+                    "laravel/framework": {
+                        "version": "v8.83.27",
+                        "dev": false
+                    },
+                    "laravel/sanctum": {
+                        "version": "v2.15.1",
+                        "dev": false
+                    },
+                    "swiftmailer/swiftmailer": {
+                        "version": "v6.3.0",
+                        "dev": false
+                    },
+                    "facade/ignition": {
+                        "version": "2.17.7",
+                        "dev": true
+                    },
+                    "phpunit/phpunit": {
+                        "version": "9.5.28",
+                        "dev": true
+                    }
+                },
+                "abandoned": {
+                    "fruitcake/laravel-cors": true,
+                    "swiftmailer/swiftmailer": "symfony/mailer",
+                    "facade/ignition": "spatie/laravel-ignition"
+                },
+                "advisory_count": 16,
+                "outdated": [
+                    {
+                        "name": "fruitcake/laravel-cors",
+                        "version": "v2.2.0",
+                        "latest": "v3.0.0",
+                        "status": "update-possible"
+                    },
+                    {
+                        "name": "guzzlehttp/guzzle",
+                        "version": "7.5.0",
+                        "latest": "8.3.1",
+                        "status": "update-possible"
+                    },
+                    {
+                        "name": "laravel/framework",
+                        "version": "v8.83.27",
+                        "latest": "v13.39.0",
+                        "status": "update-possible"
+                    },
+                    {
+                        "name": "laravel/sanctum",
+                        "version": "v2.15.1",
+                        "latest": "v4.3.3",
+                        "status": "update-possible"
+                    },
+                    {
+                        "name": "phpunit/phpunit",
+                        "version": "9.5.28",
+                        "latest": "12.5.42",
+                        "status": "update-possible"
+                    }
+                ]
+            }
+        },
+        {
+            "analyzer": "routes",
+            "title": "Routes",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Route source",
+                    "value": "Static analysis (application not booted)",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Route files read",
+                    "value": "app/Providers/RouteServiceProvider.php, routes/api.php, routes/web.php, routes/auth.php",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Total routes",
+                    "value": "11",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Web routes",
+                    "value": "10",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "API routes",
+                    "value": "1",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Named routes",
+                    "value": "9",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Closure routes",
+                    "value": "2",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Controllers referenced",
+                    "value": "5",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Behind authentication middleware",
+                    "value": "5",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Signed-URL routes",
+                    "value": "0",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                },
+                {
+                    "label": "Behind custom middleware only",
+                    "value": "0",
+                    "source": "inferred",
+                    "origin": "middleware not recognised as authentication; may still restrict access"
+                },
+                {
+                    "label": "Without authentication middleware",
+                    "value": "6",
+                    "source": "inferred",
+                    "origin": "static analysis of route files"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Routes by HTTP method",
+                    "headers": [
+                        "Method",
+                        "Routes"
+                    ],
+                    "rows": [
+                        [
+                            "GET",
+                            "8"
+                        ],
+                        [
+                            "POST",
+                            "3"
+                        ]
+                    ]
+                },
+                {
+                    "title": "Routes requiring review",
+                    "headers": [
+                        "Method",
+                        "URI",
+                        "Access",
+                        "Reason",
+                        "Defined in"
+                    ],
+                    "rows": []
+                },
+                {
+                    "title": "Route list",
+                    "headers": [
+                        "Method",
+                        "URI",
+                        "Name",
+                        "Action",
+                        "Middleware",
+                        "Access"
+                    ],
+                    "rows": [
+                        [
+                            "GET",
+                            "/",
+                            "home",
+                            "Closure",
+                            "web",
+                            "public"
+                        ],
+                        [
+                            "GET",
+                            "admin/reports",
+                            "admin.reports",
+                            "Admin\\ReportController@index",
+                            "web, auth, can:admin",
+                            "authenticated"
+                        ],
+                        [
+                            "GET",
+                            "api/user",
+                            "",
+                            "Closure",
+                            "api, auth:sanctum",
+                            "authenticated"
+                        ],
+                        [
+                            "GET",
+                            "dashboard",
+                            "dashboard",
+                            "DashboardController@index",
+                            "web, auth",
+                            "authenticated"
+                        ],
+                        [
+                            "GET",
+                            "legacy",
+                            "legacy",
+                            "LegacyController@show",
+                            "web",
+                            "public"
+                        ],
+                        [
+                            "GET",
+                            "login",
+                            "login",
+                            "Auth\\LoginController@create",
+                            "web, guest",
+                            "public"
+                        ],
+                        [
+                            "POST",
+                            "login",
+                            "",
+                            "Auth\\LoginController@store",
+                            "web, guest",
+                            "public"
+                        ],
+                        [
+                            "POST",
+                            "logout",
+                            "logout",
+                            "Auth\\LoginController@destroy",
+                            "web, auth",
+                            "authenticated"
+                        ],
+                        [
+                            "GET",
+                            "photos",
+                            "photos.index",
+                            "PhotoController@index",
+                            "web",
+                            "public"
+                        ],
+                        [
+                            "POST",
+                            "photos",
+                            "photos.store",
+                            "PhotoController@store",
+                            "web, auth",
+                            "authenticated"
+                        ],
+                        [
+                            "GET",
+                            "photos/{photo}",
+                            "photos.show",
+                            "PhotoController@show",
+                            "web",
+                            "public"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [],
+            "notes": [
+                "Routes were read from source without booting the application. Routes registered by packages (e.g. Telescope, Horizon, Filament, Sanctum) and routes built dynamically are not included; use --use-artisan to list them.",
+                "Installed packages that register their own routes (not listed above): Sanctum."
+            ],
+            "data": {
+                "source": "static",
+                "counts": {
+                    "total": 11,
+                    "api": 1,
+                    "web": 10,
+                    "by_method": {
+                        "GET": 8,
+                        "POST": 3
+                    },
+                    "by_access": {
+                        "authenticated": 5,
+                        "signed": 0,
+                        "custom": 0,
+                        "public": 6
+                    }
+                },
+                "routes": [
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "/",
+                        "name": "home",
+                        "action": "Closure",
+                        "middleware": [
+                            "web"
+                        ],
+                        "access": "public",
+                        "file": "routes/web.php",
+                        "line": 7,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "admin/reports",
+                        "name": "admin.reports",
+                        "action": "App\\Http\\Controllers\\Admin\\ReportController@index",
+                        "middleware": [
+                            "web",
+                            "auth",
+                            "can:admin"
+                        ],
+                        "access": "authenticated",
+                        "file": "routes/web.php",
+                        "line": 18,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "api/user",
+                        "name": null,
+                        "action": "Closure",
+                        "middleware": [
+                            "api",
+                            "auth:sanctum"
+                        ],
+                        "access": "authenticated",
+                        "file": "routes/api.php",
+                        "line": 6,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "dashboard",
+                        "name": "dashboard",
+                        "action": "App\\Http\\Controllers\\DashboardController@index",
+                        "middleware": [
+                            "web",
+                            "auth"
+                        ],
+                        "access": "authenticated",
+                        "file": "routes/web.php",
+                        "line": 11,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "legacy",
+                        "name": "legacy",
+                        "action": "App\\Http\\Controllers\\LegacyController@show",
+                        "middleware": [
+                            "web"
+                        ],
+                        "access": "public",
+                        "file": "routes/web.php",
+                        "line": 15,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "login",
+                        "name": "login",
+                        "action": "Auth\\LoginController@create",
+                        "middleware": [
+                            "web",
+                            "guest"
+                        ],
+                        "access": "public",
+                        "file": "routes/auth.php",
+                        "line": 5,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "POST"
+                        ],
+                        "uri": "login",
+                        "name": null,
+                        "action": "Auth\\LoginController@store",
+                        "middleware": [
+                            "web",
+                            "guest"
+                        ],
+                        "access": "public",
+                        "file": "routes/auth.php",
+                        "line": 6,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "POST"
+                        ],
+                        "uri": "logout",
+                        "name": "logout",
+                        "action": "Auth\\LoginController@destroy",
+                        "middleware": [
+                            "web",
+                            "auth"
+                        ],
+                        "access": "authenticated",
+                        "file": "routes/auth.php",
+                        "line": 7,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "photos",
+                        "name": "photos.index",
+                        "action": "App\\Http\\Controllers\\PhotoController@index",
+                        "middleware": [
+                            "web"
+                        ],
+                        "access": "public",
+                        "file": "routes/web.php",
+                        "line": 13,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "POST"
+                        ],
+                        "uri": "photos",
+                        "name": "photos.store",
+                        "action": "App\\Http\\Controllers\\PhotoController@store",
+                        "middleware": [
+                            "web",
+                            "auth"
+                        ],
+                        "access": "authenticated",
+                        "file": "routes/web.php",
+                        "line": 13,
+                        "source": "static"
+                    },
+                    {
+                        "methods": [
+                            "GET",
+                            "HEAD"
+                        ],
+                        "uri": "photos/{photo}",
+                        "name": "photos.show",
+                        "action": "App\\Http\\Controllers\\PhotoController@show",
+                        "middleware": [
+                            "web"
+                        ],
+                        "access": "public",
+                        "file": "routes/web.php",
+                        "line": 13,
+                        "source": "static"
+                    }
+                ]
+            }
+        },
+        {
+            "analyzer": "configuration",
+            "title": "Configuration",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Environment file",
+                    "value": ".env",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Environment",
+                    "value": "production",
+                    "source": "detected",
+                    "origin": ".env: APP_ENV"
+                },
+                {
+                    "label": "Published config files",
+                    "value": "9",
+                    "source": "detected",
+                    "origin": "config/"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Configuration overview",
+                    "headers": [
+                        "Area",
+                        "Setting",
+                        "Value",
+                        "Source",
+                        "Origin"
+                    ],
+                    "rows": [
+                        [
+                            "Application",
+                            "Environment",
+                            "production",
+                            "detected",
+                            ".env: APP_ENV"
+                        ],
+                        [
+                            "Application",
+                            "Debug mode",
+                            "true",
+                            "detected",
+                            ".env: APP_DEBUG"
+                        ],
+                        [
+                            "Application",
+                            "URL",
+                            "https://fixture.example.test",
+                            "detected",
+                            ".env: APP_URL"
+                        ],
+                        [
+                            "Application",
+                            "Timezone",
+                            "UTC",
+                            "detected",
+                            "config/app.php:timezone"
+                        ],
+                        [
+                            "Application",
+                            "Locale",
+                            "unknown",
+                            "unknown",
+                            "config/app.php:locale"
+                        ],
+                        [
+                            "Application",
+                            "Cipher",
+                            "AES-256-CBC",
+                            "detected",
+                            "config/app.php:cipher"
+                        ],
+                        [
+                            "Application",
+                            "Maintenance driver",
+                            "unknown",
+                            "unknown",
+                            "config/app.php:maintenance.driver"
+                        ],
+                        [
+                            "Session",
+                            "Driver",
+                            "redis",
+                            "detected",
+                            ".env: SESSION_DRIVER"
+                        ],
+                        [
+                            "Session",
+                            "Lifetime (minutes)",
+                            "unknown",
+                            "unknown",
+                            "config/session.php:lifetime"
+                        ],
+                        [
+                            "Session",
+                            "Encrypted",
+                            "unknown",
+                            "unknown",
+                            "config/session.php:encrypt"
+                        ],
+                        [
+                            "Session",
+                            "Secure cookie",
+                            "unknown",
+                            "unknown",
+                            "config/session.php:secure"
+                        ],
+                        [
+                            "Session",
+                            "HTTP-only cookie",
+                            "unknown",
+                            "unknown",
+                            "config/session.php:http_only"
+                        ],
+                        [
+                            "Session",
+                            "SameSite",
+                            "unknown",
+                            "unknown",
+                            "config/session.php:same_site"
+                        ],
+                        [
+                            "Session",
+                            "Expire on close",
+                            "unknown",
+                            "unknown",
+                            "config/session.php:expire_on_close"
+                        ],
+                        [
+                            "Cache",
+                            "Default store",
+                            "redis",
+                            "detected",
+                            ".env: CACHE_DRIVER"
+                        ],
+                        [
+                            "Queue",
+                            "Default connection",
+                            "redis",
+                            "detected",
+                            ".env: QUEUE_CONNECTION"
+                        ],
+                        [
+                            "Queue",
+                            "Failed job driver",
+                            "unknown",
+                            "unknown",
+                            "config/queue.php:failed.driver"
+                        ],
+                        [
+                            "Logging",
+                            "Default channel",
+                            "stack",
+                            "inferred",
+                            "config/logging.php:default (env('LOG_CHANNEL') default)"
+                        ],
+                        [
+                            "Filesystem",
+                            "Default disk",
+                            "local",
+                            "inferred",
+                            "config/filesystems.php:default (env('FILESYSTEM_DRIVER') default)"
+                        ],
+                        [
+                            "Authentication",
+                            "Default guard",
+                            "unknown",
+                            "unknown",
+                            "config/auth.php:defaults.guard"
+                        ],
+                        [
+                            "Authentication",
+                            "Password confirmation timeout (s)",
+                            "unknown",
+                            "unknown",
+                            "config/auth.php:password_timeout"
+                        ],
+                        [
+                            "Hashing",
+                            "Driver",
+                            "unknown",
+                            "unknown",
+                            "config/hashing.php:driver"
+                        ],
+                        [
+                            "Hashing",
+                            "Bcrypt rounds",
+                            "unknown",
+                            "unknown",
+                            "config/hashing.php:bcrypt.rounds"
+                        ],
+                        [
+                            "Logging",
+                            "Level",
+                            "debug",
+                            "inferred",
+                            "Laravel default (env('LOG_LEVEL', 'debug'))"
+                        ],
+                        [
+                            "CORS",
+                            "Configuration",
+                            "No config/cors.php",
+                            "detected",
+                            "config/"
+                        ],
+                        [
+                            "Application",
+                            "Application key",
+                            "Set",
+                            "detected",
+                            ".env: APP_KEY (value never read)"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [
+                {
+                    "id": "config.production-debug-logging",
+                    "title": "Log level is \"debug\" in production",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "component": "config/logging.php",
+                    "explanation": "Debug-level logging in production produces large logs and is more likely to record request data, queries or tokens.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); log level \"debug\" (Laravel default (env('LOG_LEVEL', 'debug'))).",
+                    "remediation": "Set LOG_LEVEL to \"info\", \"warning\" or \"error\" in the production environment.",
+                    "analyzer": "configuration"
+                }
+            ],
+            "notes": [],
+            "data": {
+                "environment": {
+                    "name": "production",
+                    "source": "detected",
+                    "from_env_file": true
+                },
+                "settings": {
+                    "environment": {
+                        "value": "production",
+                        "source": "detected"
+                    },
+                    "debug": {
+                        "value": "true",
+                        "source": "detected"
+                    },
+                    "app.url": {
+                        "value": "https://fixture.example.test",
+                        "source": "detected"
+                    },
+                    "app.timezone": {
+                        "value": "UTC",
+                        "source": "detected"
+                    },
+                    "app.locale": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "app.cipher": {
+                        "value": "AES-256-CBC",
+                        "source": "detected"
+                    },
+                    "app.maintenance": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session": {
+                        "value": "redis",
+                        "source": "detected"
+                    },
+                    "session.lifetime": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session.encrypt": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session.secure": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session.http_only": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session.same_site": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session.expire_on_close": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "cache": {
+                        "value": "redis",
+                        "source": "detected"
+                    },
+                    "queue": {
+                        "value": "redis",
+                        "source": "detected"
+                    },
+                    "queue.failed": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "log": {
+                        "value": "stack",
+                        "source": "inferred"
+                    },
+                    "filesystem": {
+                        "value": "local",
+                        "source": "inferred"
+                    },
+                    "auth.guard": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "auth.password_timeout": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "hashing.driver": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "hashing.bcrypt_rounds": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "log.level": {
+                        "value": "debug",
+                        "source": "inferred"
+                    }
+                },
+                "cors": {
+                    "source": "none"
+                },
+                "disks": []
+            }
+        },
+        {
+            "analyzer": "database",
+            "title": "Database",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Default connection",
+                    "value": "mysql",
+                    "source": "detected",
+                    "origin": ".env: DB_CONNECTION"
+                },
+                {
+                    "label": "Database technology",
+                    "value": "MySQL",
+                    "source": "detected",
+                    "origin": "config/database.php"
+                },
+                {
+                    "label": "Configured connections",
+                    "value": "sqlite, mysql, pgsql, legacy",
+                    "source": "detected",
+                    "origin": "config/database.php"
+                },
+                {
+                    "label": "Migration files",
+                    "value": "0",
+                    "source": "detected",
+                    "origin": "database/migrations"
+                },
+                {
+                    "label": "Tables created by migrations",
+                    "value": "0",
+                    "source": "detected",
+                    "origin": "Schema::create()"
+                },
+                {
+                    "label": "Foreign key constraints",
+                    "value": "0",
+                    "source": "detected",
+                    "origin": "constrained() / foreign()"
+                },
+                {
+                    "label": "Explicit indexes",
+                    "value": "0",
+                    "source": "detected",
+                    "origin": "index() / unique() / primary() / morphs()"
+                },
+                {
+                    "label": "Seeders",
+                    "value": "0",
+                    "source": "detected",
+                    "origin": "database/seeders"
+                },
+                {
+                    "label": "Factories",
+                    "value": "0",
+                    "source": "detected",
+                    "origin": "database/factories"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Connections",
+                    "headers": [
+                        "Name",
+                        "Driver",
+                        ""
+                    ],
+                    "rows": [
+                        [
+                            "sqlite",
+                            "sqlite",
+                            ""
+                        ],
+                        [
+                            "mysql",
+                            "mysql",
+                            "default"
+                        ],
+                        [
+                            "pgsql",
+                            "pgsql",
+                            ""
+                        ],
+                        [
+                            "legacy",
+                            "sqlsrv",
+                            ""
+                        ]
+                    ]
+                },
+                {
+                    "title": "Tables (from migrations)",
+                    "headers": [
+                        "Table",
+                        "Created in",
+                        "Key/index columns seen",
+                        "Foreign keys",
+                        "Indexes"
+                    ],
+                    "rows": []
+                }
+            ],
+            "findings": [
+                {
+                    "id": "db.no-migrations",
+                    "title": "Models exist but there are no migrations",
+                    "severity": "INFO",
+                    "confidence": "confirmed",
+                    "component": "database/migrations",
+                    "explanation": "The schema cannot be recreated from the repository, which makes testing and new environments harder. The schema may be managed elsewhere (a dump file, another repository).",
+                    "evidence": "app/Models contains classes; database/migrations has no PHP files.",
+                    "remediation": "Add migrations (or a schema dump via \"php artisan schema:dump\") so the schema is versioned with the code.",
+                    "analyzer": "database"
+                }
+            ],
+            "notes": [
+                "The database was not connected to. Schema details come from migration files only; tables created by packages or by raw SQL may be missing."
+            ],
+            "data": {
+                "default_connection": "mysql",
+                "driver": "mysql",
+                "technology": "MySQL",
+                "connections": {
+                    "sqlite": "sqlite",
+                    "mysql": "mysql",
+                    "pgsql": "pgsql",
+                    "legacy": "sqlsrv"
+                },
+                "migrations": 0,
+                "tables": [],
+                "foreign_keys": 0,
+                "indexes": 0,
+                "packages": []
+            }
+        },
+        {
+            "analyzer": "security",
+            "title": "Security",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Project rules",
+                    "value": "6",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Source rules",
+                    "value": "4",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Files scanned",
+                    "value": "24",
+                    "source": "detected",
+                    "origin": "app, bootstrap, config, routes"
+                },
+                {
+                    "label": "PHP files parsed",
+                    "value": "22",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Git tracking",
+                    "value": "Unknown",
+                    "source": "detected",
+                    "origin": "git ls-files"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Security checks with findings",
+                    "headers": [
+                        "Rule",
+                        "Severity",
+                        "Confidence",
+                        "Finding"
+                    ],
+                    "rows": [
+                        [
+                            "sec.debug-in-production",
+                            "HIGH",
+                            "confirmed",
+                            "Debug mode is enabled in a production environment"
+                        ],
+                        [
+                            "sec.env-permissions",
+                            "MEDIUM",
+                            "confirmed",
+                            ".env is world-readable"
+                        ],
+                        [
+                            "deps.security-advisory",
+                            "HIGH",
+                            "confirmed",
+                            "phpunit/phpunit 9.5.28 has 1 known security advisory"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [
+                {
+                    "id": "sec.debug-in-production",
+                    "title": "Debug mode is enabled in a production environment",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "component": ".env",
+                    "explanation": "With APP_DEBUG=true, error pages show stack traces, configuration values and environment variables, including credentials, to anyone who triggers an error. Older debug page versions have also had remote code execution vulnerabilities.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); APP_DEBUG=true (.env: APP_DEBUG).",
+                    "remediation": "Set APP_DEBUG=false in the production environment and run \"php artisan config:cache\" after deploying.",
+                    "analyzer": "security"
+                },
+                {
+                    "id": "sec.env-permissions",
+                    "title": ".env is world-readable",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "component": ".env",
+                    "explanation": "Any local user or process on the server can read the application's credentials.",
+                    "evidence": "Mode 0644",
+                    "remediation": "Restrict it to the owner and the web server group, e.g. chmod 640 .env.",
+                    "analyzer": "security"
+                }
+            ],
+            "notes": [
+                "Git tracking could not be determined (not a git checkout, git unavailable, or the repository is not trusted by git), so \"committed file\" checks were skipped.",
+                "tests/ is not scanned. Code findings are pattern-based and local to single expressions; they need manual review and do not prove exploitability."
+            ],
+            "data": {
+                "files_scanned": 24,
+                "php_parsed": 22,
+                "rules": [
+                    "sec.debug-in-production",
+                    "sec.env-permissions",
+                    "deps.security-advisory",
+                    "deps.security-advisory",
+                    "deps.security-advisory"
+                ]
+            }
+        },
+        {
+            "analyzer": "architecture",
+            "title": "Architecture",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Overview",
+                    "value": "Laravel 8 application using the classic kernel-based structure with 6 controllers, 1 model and 11 routes. It is primarily a server-rendered web application. Business logic appears to live in controllers and models (no service, action or repository layer detected).",
+                    "source": "inferred",
+                    "origin": "derived from detected classes, packages and routes"
+                },
+                {
+                    "label": "Code roots scanned",
+                    "value": "app",
+                    "source": "detected",
+                    "origin": "composer.json autoload"
+                },
+                {
+                    "label": "Classes, interfaces, traits and enums",
+                    "value": "9",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Patterns detected",
+                    "value": "Conventional Laravel MVC",
+                    "source": "inferred",
+                    "origin": null
+                },
+                {
+                    "label": "Frontend",
+                    "value": "No server-rendered views or SPA bridge detected",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Authentication packages",
+                    "value": "Sanctum",
+                    "source": "detected",
+                    "origin": "composer.json"
+                },
+                {
+                    "label": "API surface",
+                    "value": "1 of 11 routes are API routes",
+                    "source": "inferred",
+                    "origin": "route analysis"
+                },
+                {
+                    "label": "Outbound HTTP",
+                    "value": "0 Http facade calls, 0 Guzzle clients",
+                    "source": "detected",
+                    "origin": "static scan"
+                },
+                {
+                    "label": "Third-party integrations",
+                    "value": "None detected",
+                    "source": "detected",
+                    "origin": "composer.json"
+                },
+                {
+                    "label": "Configured services",
+                    "value": "None",
+                    "source": "detected",
+                    "origin": "config/services.php"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Component inventory",
+                    "headers": [
+                        "Component",
+                        "Count",
+                        "Examples",
+                        "Main location"
+                    ],
+                    "rows": [
+                        [
+                            "Controllers",
+                            "6",
+                            "ReportController, LoginController, Controller, DashboardController, ...",
+                            "app/Http/Controllers"
+                        ],
+                        [
+                            "Models",
+                            "1",
+                            "User",
+                            "app/Models"
+                        ],
+                        [
+                            "Service providers",
+                            "1",
+                            "RouteServiceProvider",
+                            "app/Providers"
+                        ],
+                        [
+                            "Other classes",
+                            "1",
+                            "Kernel",
+                            "app/Http"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [],
+            "notes": [
+                "This overview is inferred from file structure, class inheritance and installed packages. A missing conventional directory does not mean anything is wrong."
+            ],
+            "data": {
+                "overview": "Laravel 8 application using the classic kernel-based structure with 6 controllers, 1 model and 11 routes. It is primarily a server-rendered web application. Business logic appears to live in controllers and models (no service, action or repository layer detected).",
+                "components": {
+                    "Controllers": 6,
+                    "Models": 1,
+                    "Service providers": 1,
+                    "Other classes": 1
+                },
+                "patterns": [],
+                "frontend": [],
+                "auth_packages": [
+                    "Sanctum"
+                ],
+                "integrations": [],
+                "services": [],
+                "outbound_http": {
+                    "http_facade": 0,
+                    "guzzle": 0
+                }
+            }
+        },
+        {
+            "analyzer": "quality",
+            "title": "Code Quality",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Test framework",
+                    "value": "PHPUnit",
+                    "source": "detected",
+                    "origin": "composer.json"
+                },
+                {
+                    "label": "Test files",
+                    "value": "0 (0 feature, 0 unit)",
+                    "source": "detected",
+                    "origin": "tests/"
+                },
+                {
+                    "label": "phpunit.xml",
+                    "value": "Missing",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Continuous integration",
+                    "value": "None detected",
+                    "source": "detected",
+                    "origin": null
+                },
+                {
+                    "label": "Checks referenced in CI",
+                    "value": "None",
+                    "source": "detected",
+                    "origin": "CI configuration"
+                }
+            ],
+            "tables": [
+                {
+                    "title": "Quality tools",
+                    "headers": [
+                        "Tool",
+                        "Package",
+                        "Config",
+                        "Installed binary"
+                    ],
+                    "rows": [
+                        [
+                            "PHPStan",
+                            "not required",
+                            "none",
+                            "no"
+                        ],
+                        [
+                            "Larastan",
+                            "not required",
+                            "n/a",
+                            "n/a"
+                        ],
+                        [
+                            "Psalm",
+                            "not required",
+                            "none",
+                            "n/a"
+                        ],
+                        [
+                            "Laravel Pint",
+                            "not required",
+                            "none",
+                            "no"
+                        ],
+                        [
+                            "PHP CS Fixer",
+                            "not required",
+                            "none",
+                            "no"
+                        ],
+                        [
+                            "PHP_CodeSniffer",
+                            "not required",
+                            "none",
+                            "no"
+                        ],
+                        [
+                            "Rector",
+                            "not required",
+                            "none",
+                            "n/a"
+                        ]
+                    ]
+                }
+            ],
+            "findings": [
+                {
+                    "id": "quality.no-tests",
+                    "title": "No automated tests found",
+                    "severity": "LOW",
+                    "confidence": "confirmed",
+                    "component": "tests/",
+                    "explanation": "Without tests, upgrades (including security updates of Laravel and dependencies) cannot be verified quickly, so they tend to be postponed.",
+                    "evidence": "No *Test.php files under tests/ (PHPUnit is installed).",
+                    "remediation": "Start with feature tests for the most important routes (php artisan make:test), and run them in CI.",
+                    "analyzer": "quality"
+                },
+                {
+                    "id": "quality.no-static-analysis",
+                    "title": "No static analysis tool is installed",
+                    "severity": "INFO",
+                    "confidence": "confirmed",
+                    "component": "composer.json",
+                    "explanation": "Static analysis finds type errors and dead code before they reach production, and makes refactoring safer.",
+                    "evidence": "None of phpstan/phpstan, larastan/larastan or vimeo/psalm is required.",
+                    "remediation": "Add Larastan: composer require --dev larastan/larastan, then start at a low level and raise it over time.",
+                    "analyzer": "quality"
+                },
+                {
+                    "id": "quality.no-code-style",
+                    "title": "No code style tool is installed",
+                    "severity": "INFO",
+                    "confidence": "confirmed",
+                    "component": "composer.json",
+                    "explanation": "A formatter keeps diffs focused on behaviour and avoids style discussions in reviews.",
+                    "evidence": "None of laravel/pint, friendsofphp/php-cs-fixer or squizlabs/php_codesniffer is required.",
+                    "remediation": "Add Laravel Pint (composer require --dev laravel/pint) and run it in CI with --test.",
+                    "analyzer": "quality"
+                },
+                {
+                    "id": "quality.no-ci",
+                    "title": "No continuous integration configuration found",
+                    "severity": "INFO",
+                    "confidence": "potential",
+                    "component": "project root",
+                    "explanation": "Without CI, tests and checks depend on each developer remembering to run them. CI may be configured outside the repository (e.g. in a hosting platform).",
+                    "evidence": "None of: .github/workflows, .gitlab-ci.yml, bitbucket-pipelines.yml, .circleci/config.yml, Jenkinsfile, azure-pipelines.yml, .travis.yml.",
+                    "remediation": "Add a pipeline that runs composer install, the test suite, static analysis, the formatter in check mode and composer audit.",
+                    "analyzer": "quality"
+                }
+            ],
+            "notes": [
+                "Tools were detected but not run. Use --run-quality-tools (or --run-quality-tools=phpstan,pint) to run them; you will be asked to confirm."
+            ],
+            "data": {
+                "tools": [],
+                "test_framework": "PHPUnit",
+                "test_files": 0,
+                "ci": [],
+                "ci_tools": [],
+                "runs": []
+            }
+        }
+    ],
+    "audit": [
+        {
+            "timestamp": "2026-11-01T13:29:19+00:00",
+            "purpose": "Read Composer version",
+            "command": "composer --version --no-ansi",
+            "working_directory": "/tmp",
+            "outcome": "completed",
+            "exit_code": 0,
+            "duration_ms": 196,
+            "network": false
+        },
+        {
+            "timestamp": "2026-11-01T13:29:19+00:00",
+            "purpose": "Read Node.js version",
+            "command": "node --version",
+            "working_directory": "/tmp",
+            "outcome": "completed",
+            "exit_code": 0,
+            "duration_ms": 3,
+            "network": false
+        },
+        {
+            "timestamp": "2026-11-01T13:29:19+00:00",
+            "purpose": "Read npm version",
+            "command": "npm --version",
+            "working_directory": "/tmp",
+            "outcome": "completed",
+            "exit_code": 0,
+            "duration_ms": 73,
+            "network": false
+        },
+        {
+            "timestamp": "2026-11-01T13:29:22+00:00",
+            "purpose": "Check composer.lock against the Packagist security advisory database",
+            "command": "composer audit --format=json --abandoned=report --locked --no-plugins --no-scripts --no-interaction --no-ansi --working-dir=/path/to/laravel-8",
+            "working_directory": "/tmp",
+            "outcome": "completed",
+            "exit_code": 1,
+            "duration_ms": 2930,
+            "network": true
+        },
+        {
+            "timestamp": "2026-11-01T13:29:24+00:00",
+            "purpose": "List direct dependencies with newer releases on Packagist",
+            "command": "composer outdated --direct --format=json --locked --no-plugins --no-scripts --no-interaction --no-ansi --working-dir=/path/to/laravel-8",
+            "working_directory": "/tmp",
+            "outcome": "completed",
+            "exit_code": 0,
+            "duration_ms": 2011,
+            "network": true
+        },
+        {
+            "timestamp": "2026-11-01T13:29:24+00:00",
+            "purpose": "List files tracked by git (to tell committed files from local ones)",
+            "command": "git -c core.fsmonitor=false -c core.untrackedCache=false -C /path/to/laravel-8 ls-files -z --cached",
+            "working_directory": "/tmp",
+            "outcome": "completed",
+            "exit_code": 128,
+            "duration_ms": 1,
+            "network": false
+        }
+    ]
+}

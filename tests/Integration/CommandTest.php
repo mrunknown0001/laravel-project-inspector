@@ -41,7 +41,7 @@ final class CommandTest extends TestCase
     {
         $this->originalCwd = (string) getcwd();
         chdir($this->tempDir());
-        foreach (['laravel-8', 'laravel-10', 'laravel-11', 'laravel-12'] as $fixture) {
+        foreach (['laravel-8', 'laravel-10', 'laravel-11', 'laravel-12', 'insecure-app'] as $fixture) {
             $this->fingerprints[$fixture] = Fixtures::fingerprint(Fixtures::project($fixture));
         }
     }
@@ -166,8 +166,10 @@ final class CommandTest extends TestCase
     {
         $path = Fixtures::project('laravel-8');
 
-        self::assertSame(2, $this->runCommand('inspect', ['path' => $path, '--offline' => true, '--no-save' => true, '--fail-on' => 'medium'])->getStatusCode());
-        self::assertSame(0, $this->runCommand('inspect', ['path' => $path, '--offline' => true, '--no-save' => true, '--fail-on' => 'high'])->getStatusCode());
+        // The fixture runs APP_DEBUG=true in production (HIGH), but has nothing CRITICAL offline.
+        self::assertSame(2, $this->runCommand('inspect', ['path' => $path, '--offline' => true, '--no-save' => true, '--fail-on' => 'high'])->getStatusCode());
+        self::assertSame(0, $this->runCommand('inspect', ['path' => $path, '--offline' => true, '--no-save' => true, '--fail-on' => 'critical'])->getStatusCode());
+        self::assertSame(0, $this->runCommand('environment', ['path' => $path, '--offline' => true, '--no-save' => true, '--fail-on' => 'high'])->getStatusCode());
     }
 
     public function testValidationErrors(): void
@@ -252,6 +254,60 @@ final class CommandTest extends TestCase
         $tester = $this->runCommand('report', ['--from' => $bad]);
         self::assertSame(1, $tester->getStatusCode());
         self::assertStringContainsString('not valid JSON', preg_replace('/\s+/', ' ', $tester->getDisplay()) ?? '');
+    }
+
+    public function testSecurityRoutesAndArchitectureCommands(): void
+    {
+        $security = $this->runCommand('security', ['path' => Fixtures::project('insecure-app'), '--offline' => true, '--no-save' => true, '--fail-on' => 'high']);
+        self::assertSame(2, $security->getStatusCode());
+        $display = preg_replace('/\s+/', ' ', $security->getDisplay()) ?? '';
+        self::assertStringContainsString('CSRF protection is disabled for all routes', $display);
+        self::assertStringContainsString('A public route calls phpinfo()', $display);
+        self::assertStringNotContainsString('Insecure-Prod-Pass-991', $security->getDisplay());
+        self::assertStringNotContainsString('Live-Literal-Secret-77aa', $security->getDisplay());
+
+        $routes = $this->runCommand('routes', ['path' => Fixtures::project('laravel-11'), '--offline' => true, '--no-save' => true], verbosity: OutputInterface::VERBOSITY_VERBOSE);
+        self::assertSame(0, $routes->getStatusCode());
+        self::assertStringContainsString('ProfileController@update', $routes->getDisplay());
+
+        $architecture = $this->runCommand('architecture', ['path' => Fixtures::project('laravel-11'), '--offline' => true, '--no-save' => true]);
+        self::assertStringContainsString('Component inventory', $architecture->getDisplay());
+    }
+
+    public function testFullInspectionRunsEveryAnalyzerAndWritesAllFormats(): void
+    {
+        $tester = $this->runCommand('inspect', ['path' => Fixtures::project('insecure-app'), '--offline' => true, '--format' => 'html']);
+        self::assertSame(0, $tester->getStatusCode());
+
+        $json = json_decode((string) file_get_contents((glob($this->reportsDir() . '/*.json') ?: [''])[0]), true, 512, JSON_THROW_ON_ERROR);
+        self::assertIsArray($json);
+        self::assertSame(['environment', 'dependencies', 'routes', 'configuration', 'database', 'security', 'architecture', 'quality'], array_column($json['summary']['analyzers'], 'analyzer'));
+        self::assertSame(['completed'], array_values(array_unique(array_column($json['summary']['analyzers'], 'status'))));
+
+        $html = (string) file_get_contents((glob($this->reportsDir() . '/*.html') ?: [''])[0]);
+        self::assertStringContainsString('id="section-security"', $html);
+        foreach (['Insecure-Prod-Pass-991', 'Live-Literal-Secret-77aa', 'Redis-Pass-55', 'ntl_live_FixtureFakeKey123456'] as $secret) {
+            self::assertStringNotContainsString($secret, $html);
+            self::assertStringNotContainsString($secret, json_encode($json, JSON_THROW_ON_ERROR));
+        }
+    }
+
+    public function testOptInOperationsAreRefusedWithoutInteractiveConfirmation(): void
+    {
+        $runner = null;
+        $services = Services::fromBasePath(dirname(__DIR__, 2));
+        $services->useProcessRunnerFactory(static function (AuditLog $audit, InspectionOptions $options) use (&$runner): \LaraInspect\Process\SafeProcessRunner {
+            // A real runner with the default deny-all policy, so nothing with side effects can start.
+            return $runner = new \LaraInspect\Process\SafeProcessRunner($audit, 10, offline: true, allowlist: ['php']);
+        });
+        $tester = new CommandTester((new Application($services))->find('inspect'));
+        $tester->execute(['path' => Fixtures::project('laravel-11'), '--offline' => true, '--no-save' => true, '--use-artisan' => true, '--run-quality-tools' => null, '--only' => ['routes', 'quality'], '--format' => 'json', '--output' => '-'], ['interactive' => false, 'capture_stderr_separately' => true]);
+
+        $data = json_decode($tester->getDisplay(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertIsArray($data);
+        self::assertSame('static', $data['results'][0]['data']['source']);
+        self::assertStringContainsString('artisan route:list was not used', $data['results'][0]['notes'][0]);
+        self::assertSame(['refused'], array_values(array_unique(array_column($data['audit'], 'outcome'))), 'Every side-effect command was refused and audited.');
     }
 
     /**

@@ -127,6 +127,26 @@ final class ComposerProject
         );
     }
 
+    /**
+     * PSR-4 roots from composer.json, e.g. ["App\\" => ["app/"]].
+     *
+     * @return array<string, list<string>>
+     */
+    public function psr4(bool $dev = false): array
+    {
+        $autoload = Arr::array($this->manifest(), $dev ? 'autoload-dev' : 'autoload');
+        $map = [];
+        foreach (Arr::array($autoload, 'psr-4') as $prefix => $dirs) {
+            $dirs = is_array($dirs) ? $dirs : [$dirs];
+            $map[(string) $prefix] = array_values(array_filter(array_map(
+                static fn (mixed $d): string => is_string($d) ? trim(str_replace('\\', '/', $d), '/') : '',
+                $dirs,
+            ), static fn (string $d): bool => $d !== ''));
+        }
+
+        return $map;
+    }
+
     public function phpConstraint(): ?string
     {
         return $this->require()['php'] ?? null;

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace LaraInspect\Console;
 
+use LaraInspect\Console\Commands\ArchitectureCommand;
 use LaraInspect\Console\Commands\DependenciesCommand;
 use LaraInspect\Console\Commands\EnvironmentCommand;
 use LaraInspect\Console\Commands\InspectCommand;
 use LaraInspect\Console\Commands\ReportCommand;
+use LaraInspect\Console\Commands\RoutesCommand;
+use LaraInspect\Console\Commands\SecurityCommand;
 use LaraInspect\Support\Services;
 use Symfony\Component\Console\Application as SymfonyApplication;
 
@@ -21,6 +24,9 @@ final class Application extends SymfonyApplication
             new InspectCommand($services),
             new EnvironmentCommand($services),
             new DependenciesCommand($services),
+            new RoutesCommand($services),
+            new SecurityCommand($services),
+            new ArchitectureCommand($services),
             new ReportCommand($services),
         ]);
     }

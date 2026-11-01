@@ -26,26 +26,6 @@ final class SecretRedactor
 
     private const SENSITIVE_WORDS = 'KEY|SECRET|TOKEN|PASSWORD|PASSWD|PWD|PASS|CREDENTIALS?|PRIVATE|AUTH|DSN|SALT|SIGNATURE';
 
-    /** @var array<string, string> pattern => replacement */
-    private const TOKEN_PATTERNS = [
-        '/-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----.*?(?:-----END [A-Z0-9 ]*PRIVATE KEY-----|$)/s' => '[REDACTED PRIVATE KEY]',
-        // scheme://user:password@host keeps the user so the host is still identifiable.
-        '#\b([a-z][a-z0-9+.\-]*://)([^:/\s@]*):([^@/\s]+)@#i' => '$1$2:' . self::MASK . '@',
-        '/\bsk-ant-[A-Za-z0-9_\-]{16,}/' => self::MASK,
-        '/\bsk-(?:proj-|or-v1-)?[A-Za-z0-9_\-]{20,}/' => self::MASK,
-        '/\bntl_live_[A-Za-z0-9_\-]{8,}/' => self::MASK,
-        '/\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/' => self::MASK,
-        '/\bgh[pousr]_[A-Za-z0-9]{30,}/' => self::MASK,
-        '/\bgithub_pat_[A-Za-z0-9_]{30,}/' => self::MASK,
-        '/\bxox[abprs]-[A-Za-z0-9\-]{10,}/' => self::MASK,
-        '/\bAIza[0-9A-Za-z_\-]{30,}/' => self::MASK,
-        '/\b[sr]k_(?:live|test)_[0-9A-Za-z]{10,}/' => self::MASK,
-        '/\bSG\.[\w\-]{16,}\.[\w\-]{16,}/' => self::MASK,
-        '/\beyJ[A-Za-z0-9_\-]{8,}\.eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}/' => self::MASK,
-        // Laravel APP_KEY format.
-        '#\bbase64:[A-Za-z0-9+/]{20,}={0,2}#' => self::MASK,
-    ];
-
     /** @var list<string> */
     private array $knownSecrets = [];
 
@@ -92,9 +72,11 @@ final class SecretRedactor
             $text = str_replace($this->knownSecrets, self::MASK, $text);
         }
 
-        foreach (self::TOKEN_PATTERNS as $pattern => $replacement) {
-            $text = preg_replace($pattern, $replacement, $text) ?? $text;
+        foreach (SecretPatterns::TOKENS as $label => $pattern) {
+            $text = preg_replace($pattern, $label === 'Private key' ? '[REDACTED PRIVATE KEY]' : self::MASK, $text) ?? $text;
         }
+        // scheme://user:password@host keeps the user so the host is still identifiable.
+        $text = preg_replace(SecretPatterns::URL_CREDENTIALS, '$1$2:' . self::MASK . '@', $text) ?? $text;
 
         // ENV style: DB_PASSWORD=value, export API_KEY="value"
         $text = preg_replace(

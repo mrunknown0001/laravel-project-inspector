@@ -24,6 +24,7 @@ final class EnvFile
         'CACHE_DRIVER', 'CACHE_STORE',
         'QUEUE_CONNECTION', 'QUEUE_DRIVER',
         'SESSION_DRIVER', 'SESSION_LIFETIME', 'SESSION_ENCRYPT', 'SESSION_SECURE_COOKIE', 'SESSION_SAME_SITE', 'SESSION_HTTP_ONLY',
+        'SESSION_EXPIRE_ON_CLOSE', 'SESSION_DOMAIN', 'QUEUE_FAILED_DRIVER', 'AUTH_GUARD', 'AUTH_PASSWORD_TIMEOUT', 'HASH_DRIVER',
         'LOG_CHANNEL', 'LOG_STACK', 'LOG_LEVEL', 'LOG_DEPRECATIONS_CHANNEL',
         'FILESYSTEM_DISK', 'FILESYSTEM_DRIVER',
         'BROADCAST_DRIVER', 'BROADCAST_CONNECTION',
@@ -35,12 +36,14 @@ final class EnvFile
      * @param array<string, string> $safeValues
      * @param array<string, bool>   $defined     key => non-empty
      * @param list<string>          $secretValues
+     * @param array<string, string> $hashes      key => sha256(value) for non-empty values
      */
     private function __construct(
         private readonly string $origin,
         private readonly array $safeValues,
         private readonly array $defined,
         private readonly array $secretValues,
+        private readonly array $hashes = [],
     ) {
     }
 
@@ -51,8 +54,12 @@ final class EnvFile
         $safe = [];
         $defined = [];
         $secrets = [];
+        $hashes = [];
         foreach ($raw as $key => $value) {
             $defined[$key] = $value !== '';
+            if ($value !== '') {
+                $hashes[$key] = hash('sha256', $value);
+            }
             if (in_array($key, self::SAFE_KEYS, true)) {
                 $safe[$key] = $value;
             } elseif ($value !== '') {
@@ -60,7 +67,7 @@ final class EnvFile
             }
         }
 
-        return new self($origin, $safe, $defined, $secrets);
+        return new self($origin, $safe, $defined, $secrets, $hashes);
     }
 
     public static function empty(): self
@@ -102,6 +109,14 @@ final class EnvFile
     public function get(string $key): ?string
     {
         return $this->safeValues[$key] ?? null;
+    }
+
+    /**
+     * SHA-256 of a value, so two env files can be compared without exposing either value.
+     */
+    public function valueHash(string $key): ?string
+    {
+        return $this->hashes[$key] ?? null;
     }
 
     public function isReadable(string $key): bool

@@ -36,11 +36,12 @@ final class Inspector
         // the selected analyzers never read it themselves.
         $context->env();
 
+        $seen = [];
         foreach ($analyzers as $analyzer) {
             if ($onStart !== null) {
                 $onStart($analyzer);
             }
-            $results[] = $this->runAnalyzer($analyzer, $context);
+            $results[] = $this->withoutDuplicates($this->runAnalyzer($analyzer, $context), $seen);
         }
 
         $report = new InspectionReport(
@@ -55,6 +56,26 @@ final class Inspector
 
         // Redact everything once, at the boundary, so no reporter can leak a secret.
         return InspectionReport::fromArray($context->redactor->redactArray($report->toArray()));
+    }
+
+    /**
+     * Analyzers may share rules (e.g. security advisories appear under both
+     * dependencies and security). A finding is kept only where it first appears.
+     *
+     * @param array<string, true> $seen
+     */
+    private function withoutDuplicates(AnalyzerResult $result, array &$seen): AnalyzerResult
+    {
+        $findings = [];
+        foreach ($result->findings as $finding) {
+            $key = $finding->id . '|' . $finding->component . '|' . $finding->title;
+            if (!isset($seen[$key])) {
+                $seen[$key] = true;
+                $findings[] = $finding;
+            }
+        }
+
+        return new AnalyzerResult($result->analyzer, $result->title, $result->status, $result->facts, $result->tables, $findings, $result->notes, $result->data);
     }
 
     private function runAnalyzer(AnalyzerInterface $analyzer, InspectionContext $context): AnalyzerResult

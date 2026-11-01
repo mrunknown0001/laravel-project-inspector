@@ -16,6 +16,7 @@ final readonly class CommandSpec
      * @param bool                  $network     Whether the command contacts remote services.
      * @param bool                  $sideEffects Whether it may change anything; requires explicit confirmation.
      * @param array<string, string> $env         Extra environment variables.
+     * @param string|null           $warning     Shown when asking for confirmation: what could change.
      */
     public function __construct(
         public string $executable,
@@ -26,6 +27,7 @@ final readonly class CommandSpec
         public bool $network = false,
         public bool $sideEffects = false,
         public array $env = [],
+        public ?string $warning = null,
     ) {
     }
 

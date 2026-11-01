@@ -51,6 +51,21 @@ final class InspectorTest extends TestCase
         self::assertSame('sample', $report->findings()[0]->analyzer);
     }
 
+    public function testDuplicateFindingsAreKeptOnlyWhereTheyFirstAppear(): void
+    {
+        $finding = new Finding('deps.security-advisory', 'x/y has 1 advisory', Severity::High, Confidence::Confirmed, 'composer.lock: x/y', 'e', 'v', 'r');
+        $make = static fn (string $name) => AnalyzerRegistryTest::analyzer($name, static fn () => new AnalyzerResult($name, ucfirst($name), findings: [
+            $finding,
+            new Finding('own.' . $name, 'Own', Severity::Low, Confidence::Potential, 'c', 'e', 'v', 'r'),
+        ]));
+        $redactor = new SecretRedactor();
+
+        $report = (new Inspector('1.0.0', new AuditLog($redactor)))->inspect(Fixtures::context(Fixtures::project('laravel-8'), redactor: $redactor), [$make('dependencies'), $make('security')]);
+
+        self::assertSame(['deps.security-advisory', 'own.dependencies'], array_map(static fn ($f) => $f->id, $report->results[0]->findings));
+        self::assertSame(['own.security'], array_map(static fn ($f) => $f->id, $report->results[1]->findings));
+    }
+
     public function testEverythingIsRedactedIncludingValuesOnlyKnownFromDotEnv(): void
     {
         // The laravel-8 fixture's .env holds DB_PASSWORD="Fixture-DB-Pass-8812".
