@@ -1,0 +1,47 @@
+{
+    "name": "larainspect/laravel-project-inspector",
+    "description": "Read-only CLI that inspects Laravel projects and generates technical reports, with optional AI-assisted analysis.",
+    "type": "project",
+    "license": "MIT",
+    "keywords": ["laravel", "inspector", "cli", "security", "audit", "report"],
+    "require": {
+        "php": "^8.3",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-tokenizer": "*",
+        "composer/semver": "^3.4",
+        "nikic/php-parser": "^5.0",
+        "symfony/console": "^7.1",
+        "symfony/http-client": "^7.1",
+        "symfony/process": "^7.1"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaraInspect\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaraInspect\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/larainspect"
+    ],
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse --memory-limit=512M",
+        "check": ["@analyse", "@test"]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "platform-check": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,12 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "mix"
+    },
+    "devDependencies": {
+        "axios": "^0.21",
+        "laravel-mix": "^6.0.6",
+        "lodash": "^4.17.19",
+        "vue": "^2.6.12"
+    }
+}

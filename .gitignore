@@ -1,0 +1,14 @@
+/vendor/
+/.env
+/.phpunit.cache/
+/.phpunit.result.cache
+/phpstan.neon
+/phpunit.xml
+/reports/*
+!/reports/.gitkeep
+/build/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

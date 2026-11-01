@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use LaraInspect\Console\Application;
+use LaraInspect\Support\Services;
+
+if (version_compare(PHP_VERSION, '8.3.0', '<')) {
+    fwrite(STDERR, sprintf("Laravel Project Inspector requires PHP 8.3 or later; this is PHP %s.\n", PHP_VERSION));
+    exit(1);
+}
+
+// Works from a git checkout (vendor/ next to bin/) and as a Composer-installed binary.
+$autoloaders = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+$autoloader = null;
+foreach ($autoloaders as $candidate) {
+    if (is_file($candidate)) {
+        $autoloader = $candidate;
+        break;
+    }
+}
+if ($autoloader === null) {
+    fwrite(STDERR, "Dependencies are not installed. Run \"composer install\" in the inspector directory.\n");
+    exit(1);
+}
+require $autoloader;
+
+$application = new Application(Services::fromBasePath(dirname(__DIR__)));
+exit($application->run());

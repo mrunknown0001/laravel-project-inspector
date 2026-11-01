@@ -1,0 +1,27 @@
+{
+    "name": "fixture/laravel-12-app",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "inertiajs/inertia-laravel": "^2.0",
+        "laravel/framework": "^12.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.example.test"
+        }
+    ],
+    "config": {
+        "secure-http": false,
+        "audit": {
+            "ignore": [
+                "PKSA-fixture-0001"
+            ]
+        }
+    },
+    "minimum-stability": "dev"
+}

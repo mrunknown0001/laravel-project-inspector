@@ -1,0 +1,5 @@
+#!/usr/bin/env php
+<?php
+
+// Test fixture: never executed by the inspector.
+exit(1);

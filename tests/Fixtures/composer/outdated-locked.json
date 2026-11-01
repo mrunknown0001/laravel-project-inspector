@@ -1,0 +1,47 @@
+{
+    "locked": [
+        {
+            "name": "guzzlehttp/psr7",
+            "direct-dependency": true,
+            "homepage": null,
+            "source": "https://github.com/guzzle/psr7/tree/2.4.0",
+            "version": "2.4.0",
+            "release-age": "4 years old",
+            "release-date": "2022-06-20T21:43:11+00:00",
+            "latest": "3.2.0",
+            "latest-status": "update-possible",
+            "latest-release-date": "2026-10-17T23:57:19+00:00",
+            "description": "PSR-7 message implementation that also provides common utility methods",
+            "abandoned": false
+        },
+        {
+            "name": "phpmailer/phpmailer",
+            "direct-dependency": true,
+            "homepage": null,
+            "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.4.0",
+            "version": "v6.4.0",
+            "release-age": "5 years old",
+            "release-date": "2021-03-31T20:06:42+00:00",
+            "latest": "v7.1.1",
+            "latest-status": "update-possible",
+            "latest-release-date": "2026-05-18T08:06:14+00:00",
+            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "abandoned": false
+        },
+        {
+            "name": "swiftmailer/swiftmailer",
+            "direct-dependency": true,
+            "homepage": "https://swiftmailer.symfony.com",
+            "source": "https://github.com/swiftmailer/swiftmailer/tree/v6.3.0",
+            "version": "v6.3.0",
+            "release-age": "5 years old",
+            "release-date": "2021-10-18T15:26:12+00:00",
+            "latest": "v6.3.0",
+            "latest-status": "up-to-date",
+            "latest-release-date": "2021-10-18T15:26:12+00:00",
+            "description": "Swiftmailer, free feature-rich PHP mailer",
+            "warning": "Package swiftmailer/swiftmailer is abandoned, you should avoid using it. Use symfony/mailer instead.",
+            "abandoned": "symfony/mailer"
+        }
+    ]
+}

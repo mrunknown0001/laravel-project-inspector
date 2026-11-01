@@ -1,0 +1,79 @@
+{
+    "_readme": [
+        "This file is a test fixture."
+    ],
+    "content-hash": "00000000000000000000000000000000",
+    "packages": [
+        {
+            "name": "laravel/framework",
+            "version": "v11.34.2",
+            "type": "library",
+            "require": {
+                "php": "^8.2"
+            },
+            "replace": {
+                "illuminate/support": "self.version"
+            }
+        },
+        {
+            "name": "laravel/tinker",
+            "version": "v2.10.0",
+            "type": "library",
+            "require": {
+                "php": "^7.2.5|^8.0"
+            }
+        },
+        {
+            "name": "livewire/livewire",
+            "version": "v3.5.12",
+            "type": "library",
+            "require": {
+                "php": "^8.1"
+            }
+        },
+        {
+            "name": "symfony/clock",
+            "version": "v8.0.1",
+            "type": "library",
+            "require": {
+                "php": ">=8.4"
+            }
+        },
+        {
+            "name": "symfony/console",
+            "version": "v7.2.0",
+            "type": "library",
+            "require": {
+                "php": ">=8.2"
+            }
+        }
+    ],
+    "packages-dev": [
+        {
+            "name": "laravel/pint",
+            "version": "v1.18.3",
+            "type": "project",
+            "require": {
+                "php": "^8.1.0"
+            }
+        },
+        {
+            "name": "pestphp/pest",
+            "version": "v3.5.1",
+            "type": "library",
+            "require": {
+                "php": "^8.2.0"
+            }
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^8.2"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

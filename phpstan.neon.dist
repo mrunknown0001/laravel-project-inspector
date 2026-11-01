@@ -1,0 +1,9 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+        - bin/larainspect
+    excludePaths:
+        - tests/Fixtures
+    treatPhpDocTypesAsCertain: false
