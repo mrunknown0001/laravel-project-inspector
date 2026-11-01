@@ -22,7 +22,7 @@ composer --version
 ## Linux and macOS
 
 ```bash
-git clone <repository-url> ~/tools/laravel-project-inspector
+git clone https://github.com/mrunknown0001/laravel-project-inspector.git ~/tools/laravel-project-inspector
 cd ~/tools/laravel-project-inspector
 composer install --no-dev
 php bin/larainspect --version
@@ -46,7 +46,7 @@ macOS with Homebrew PHP works the same way (`brew install php composer`).
 3. In PowerShell or Command Prompt:
 
 ```powershell
-git clone <repository-url> C:\Tools\laravel-project-inspector
+git clone https://github.com/mrunknown0001/laravel-project-inspector.git C:\Tools\laravel-project-inspector
 cd C:\Tools\laravel-project-inspector
 composer install --no-dev
 bin\larainspect.bat --version
@@ -86,7 +86,7 @@ For speed, keep projects you inspect often inside the WSL filesystem (`~/project
 ## As a global Composer package
 
 ```bash
-composer global config repositories.larainspect vcs <repository-url>
+composer global config repositories.larainspect vcs https://github.com/mrunknown0001/laravel-project-inspector.git
 composer global require larainspect/laravel-project-inspector:dev-main
 larainspect --version
 ```

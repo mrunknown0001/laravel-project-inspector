@@ -81,7 +81,7 @@ Full sample reports: [Markdown](docs/examples/insecure-app-report.md),
 You need PHP 8.3+ and Composer 2.
 
 ```bash
-git clone <repository-url> ~/tools/laravel-project-inspector
+git clone https://github.com/mrunknown0001/laravel-project-inspector.git ~/tools/laravel-project-inspector
 cd ~/tools/laravel-project-inspector
 composer install --no-dev
 ln -s "$PWD/bin/larainspect" ~/.local/bin/larainspect
@@ -239,7 +239,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with: { php-version: '8.3' }
       - run: |
-          git clone --depth 1 <repository-url> inspector
+          git clone --depth 1 https://github.com/mrunknown0001/laravel-project-inspector.git inspector
           composer install --no-dev --working-dir=inspector
       - run: php inspector/bin/larainspect inspect app --format=markdown --output=inspection.md --fail-on=high
       - if: always()
