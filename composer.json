@@ -62,7 +62,8 @@
             "/docs/examples",
             "/reports",
             "phpunit.xml.dist",
-            "phpstan.neon.dist"
+            "phpstan.neon.dist",
+            "/website"
         ]
     }
 }

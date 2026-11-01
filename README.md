@@ -7,6 +7,8 @@ the stack and versions, dependency problems, routes and their access control, co
 database schema, security risks, architecture and code quality. It can also ask an AI model to
 explain the results.
 
+**Website: [laravel-project-inspector.vercel.app](https://laravel-project-inspector.vercel.app)**
+
 [![Tests](https://github.com/mrunknown0001/laravel-project-inspector/actions/workflows/tests.yml/badge.svg)](https://github.com/mrunknown0001/laravel-project-inspector/actions/workflows/tests.yml)
 ![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777BB4)
 ![Laravel 8 to 13](https://img.shields.io/badge/Laravel-8%E2%80%9313-FF2D20)
@@ -273,6 +275,7 @@ and the report says so. Lumen is recognised but not supported.
 
 | Guide | |
 |---|---|
+| [Website](https://laravel-project-inspector.vercel.app) | Overview of the tool, with a live sample report. |
 | [Installation](docs/installation.md) | All platforms, Composer global install, upgrading, troubleshooting. |
 | [Command reference](docs/commands.md) | Every command and option, generated from the code. |
 | [AI providers](docs/ai-providers.md) | Setup per provider, settings, and exactly what is sent. |

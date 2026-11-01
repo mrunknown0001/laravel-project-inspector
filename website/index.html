@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>larainspect · Inspect any Laravel project without touching it</title>
+<meta name="description" content="larainspect is an open-source, read-only CLI that reports a Laravel application's stack, dependencies, routes, configuration, database schema, security risks, architecture and code quality, with optional AI explanations.">
+<meta property="og:title" content="larainspect · Inspect any Laravel project. Touch nothing.">
+<meta property="og:description" content="Read-only Laravel project inspector: eight analyzers, security checks, Markdown/HTML/JSON reports and optional AI explanations. Open source, MIT.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FFD23F">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="#top" aria-label="larainspect home">
+      <span class="logo-bracket">[</span>larainspect<span class="logo-cursor" aria-hidden="true"></span><span class="logo-bracket">]</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#analyzers">Analyzers</a>
+      <a href="#how">How it works</a>
+      <a href="#safety">Safety</a>
+      <a href="#ai">AI</a>
+      <a href="#install">Install</a>
+    </nav>
+    <a class="btn btn-ink btn-sm" href="https://github.com/mrunknown0001/laravel-project-inspector">GitHub</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="sticker sticker-pink">Open source · MIT · PHP 8.3+</p>
+      <h1>Inspect any Laravel project. <span class="hl">Touch nothing.</span></h1>
+      <p class="lede">
+        <strong>larainspect</strong> is a read-only command-line tool. Point it at a Laravel application and get its
+        stack, dependencies, routes, configuration, database schema, security risks, architecture and code quality.
+        It can also ask an AI model to explain what it found.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-yellow" href="https://github.com/mrunknown0001/laravel-project-inspector">View on GitHub</a>
+        <a class="btn btn-white" href="sample-report.html">Open a real report</a>
+      </div>
+      <div class="copy-box">
+        <code id="clone-cmd">git clone https://github.com/mrunknown0001/laravel-project-inspector.git</code>
+        <button class="copy-btn" type="button" data-copy="#clone-cmd">Copy</button>
+      </div>
+    </div>
+
+    <figure class="terminal hero-terminal" aria-label="Example terminal output">
+      <div class="terminal-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="terminal-title">larainspect security ./insecure-app</span>
+      </div>
+<pre class="terminal-body"><span class="t-muted">Findings</span>
+<span class="t-muted">--------</span>
+<span class="chip chip-critical">CRITICAL</span> 1. .env is committed to version control
+<span class="chip chip-high">HIGH</span> 2. Debug mode is enabled in a production environment
+<span class="chip chip-high">HIGH</span> 3. APP_KEY is not set
+<span class="chip chip-high">HIGH</span> 5. CORS allows any origin together with credentials
+<span class="chip chip-high">HIGH</span> 11. A public route calls phpinfo()
+<span class="chip chip-high">HIGH</span> 13. CSRF protection is disabled for all routes
+<span class="chip chip-high">HIGH</span> 16. Raw SQL built with request input <span class="t-muted">(potential)</span>
+<span class="chip chip-medium">MEDIUM</span> 19. Session cookie is readable by JavaScript
+<span class="t-muted">...</span>
+
+<span class="t-muted">Summary</span>
+<span class="chip chip-critical">CRITICAL</span> 1  <span class="chip chip-high">HIGH</span> 16  <span class="chip chip-medium">MEDIUM</span> 16  <span class="chip chip-low">LOW</span> 7  <span class="chip chip-info">INFO</span> 1</pre>
+      <figcaption>Real output from the deliberately insecure test project.</figcaption>
+    </figure>
+  </div>
+  <p class="seal" aria-hidden="true"><span>READ-ONLY</span><span>0 files written</span></p>
+</section>
+
+<!-- STATS -->
+<section class="stats" aria-label="At a glance">
+  <div class="wrap stats-grid">
+    <div class="stat stat-yellow"><span class="stat-num">8</span><span class="stat-label">analyzers</span></div>
+    <div class="stat stat-mint"><span class="stat-num">4</span><span class="stat-label">AI providers, all optional</span></div>
+    <div class="stat stat-blue"><span class="stat-num">300</span><span class="stat-label">automated tests on Linux, macOS and Windows</span></div>
+    <div class="stat stat-pink"><span class="stat-num">0</span><span class="stat-label">files written to your project</span></div>
+  </div>
+</section>
+
+<!-- QUESTIONS -->
+<section class="section" id="questions">
+  <div class="wrap">
+    <h2 class="section-title"><span class="tag">01</span> The first day with an inherited codebase, in one command</h2>
+    <p class="section-lede">Every new project starts with the same questions. <code>larainspect inspect</code> answers all of them at once.</p>
+    <ul class="questions">
+      <li><span class="q">Which Laravel version is this, and is it still getting security fixes?</span><span class="a">environment</span></li>
+      <li><span class="q">Is <code>composer.lock</code> in sync? Do the locked packages fit the PHP version?</span><span class="a">dependencies</span></li>
+      <li><span class="q">Which routes are public, and which ones shouldn't be?</span><span class="a">routes</span></li>
+      <li><span class="q">Is debug mode on in production? Are cookies and CORS set up safely?</span><span class="a">configuration</span></li>
+      <li><span class="q">Are secrets committed? Is request input reaching raw SQL or a shell?</span><span class="a">security</span></li>
+      <li><span class="q">What tables exist, and which foreign keys have no index?</span><span class="a">database</span></li>
+      <li><span class="q">Where does the business logic live: controllers, services, actions?</span><span class="a">architecture</span></li>
+      <li><span class="q">Are there tests, static analysis and CI?</span><span class="a">quality</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ANALYZERS -->
+<section class="section section-alt" id="analyzers">
+  <div class="wrap">
+    <h2 class="section-title"><span class="tag">02</span> Eight analyzers, one report</h2>
+    <p class="section-lede">Run them all with <code>inspect</code>, one at a time with its own command, or pick some with <code>--only</code>.</p>
+    <div class="cards">
+      <article class="card">
+        <span class="card-num">01</span>
+        <h3>environment</h3>
+        <p>Laravel version and support window, PHP requirement, Composer and Node versions, Vite or Mix, Livewire/Inertia/Vue/React, and the database, cache, queue and session drivers.</p>
+        <code class="rule">env.laravel-end-of-life</code>
+      </article>
+      <article class="card">
+        <span class="card-num">02</span>
+        <h3>dependencies</h3>
+        <p>Lock drift, PHP version conflicts, vendor drift, abandoned packages, Packagist security advisories, outdated packages and insecure Composer settings.</p>
+        <code class="rule">deps.security-advisory</code>
+      </article>
+      <article class="card">
+        <span class="card-num">03</span>
+        <h3>routes</h3>
+        <p>Routes rebuilt from <code>bootstrap/app.php</code> or <code>RouteServiceProvider</code>: groups, prefixes, resources, controller groups and controller middleware, each classified by access control.</p>
+        <code class="rule">routes.duplicate</code>
+      </article>
+      <article class="card">
+        <span class="card-num">04</span>
+        <h3>configuration</h3>
+        <p>App, session, cache, queue, logging, CORS, filesystem, auth and hashing settings, with where each value came from, plus production misconfiguration.</p>
+        <code class="rule">config.production-sync-queue</code>
+      </article>
+      <article class="card">
+        <span class="card-num">05</span>
+        <h3>database</h3>
+        <p>Connections and engine, and the tables, foreign keys and indexes defined in migrations. Flags likely missing indexes. It never connects to the database.</p>
+        <code class="rule">db.missing-index</code>
+      </article>
+      <article class="card card-feature">
+        <span class="card-num">06</span>
+        <h3>security</h3>
+        <p>Debug mode, <code>APP_KEY</code>, cookies, CORS, committed secrets, sensitive files, risky routes, CSRF exclusions, injection patterns, mass assignment, unescaped Blade output and more.</p>
+        <code class="rule">sec.csrf-disabled</code>
+      </article>
+      <article class="card">
+        <span class="card-num">07</span>
+        <h3>architecture</h3>
+        <p>Controllers, models, services, repositories, jobs, events, Livewire/Filament/Inertia, integrations and authentication packages, plus a plain-English overview.</p>
+        <code class="rule">arch.large-classes</code>
+      </article>
+      <article class="card">
+        <span class="card-num">08</span>
+        <h3>quality</h3>
+        <p>PHPStan/Larastan, Pint/PHP CS Fixer/PHP_CodeSniffer, Rector, tests and CI configuration. Tools can optionally be run in report-only mode.</p>
+        <code class="rule">quality.no-tests</code>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="wrap">
+    <h2 class="section-title"><span class="tag">03</span> How it works</h2>
+    <p class="section-lede">Nothing in your project is executed or included. The inspector reads files and parses them.</p>
+
+    <ol class="pipeline">
+      <li class="stage stage-white">
+        <span class="stage-step">IN</span>
+        <h3>Your project</h3>
+        <p>Opened read-only. Every path is confined to the project root, and symlinks pointing outside it are refused.</p>
+      </li>
+      <li class="stage stage-yellow">
+        <span class="stage-step">PARSE</span>
+        <h3>Static readers</h3>
+        <p>Only harmless <code>.env</code> keys are read. Config files, routes, migrations and classes are parsed with nikic/php-parser, never run.</p>
+      </li>
+      <li class="stage stage-blue">
+        <span class="stage-step">CHECK</span>
+        <h3>8 analyzers</h3>
+        <p>Facts and findings, each with a severity, a confidence, evidence and a fix.</p>
+      </li>
+      <li class="stage stage-pink">
+        <span class="stage-step">SCRUB</span>
+        <h3>Redactor</h3>
+        <p>Removes <code>.env</code> secrets, API tokens, private keys and URL passwords from everything that follows.</p>
+      </li>
+      <li class="stage stage-mint">
+        <span class="stage-step">OUT</span>
+        <h3>Reports</h3>
+        <p>Terminal, Markdown, self-contained HTML or JSON, plus optional AI explanations.</p>
+      </li>
+    </ol>
+
+    <div class="aside-box">
+      <h3>The only commands it runs on its own</h3>
+      <div class="cmd-list">
+        <code>composer audit --locked --no-plugins --no-scripts</code>
+        <code>composer outdated --direct --locked --no-plugins --no-scripts</code>
+        <code>git -c core.fsmonitor=false ls-files</code>
+        <code>composer --version · node --version · npm --version</code>
+      </div>
+      <p>Each runs without a shell, has a timeout, and is recorded in <code>reports/audit.log</code>. Add <code>--offline</code> to skip the two that contact Packagist.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ANATOMY -->
+<section class="section section-alt" id="anatomy">
+  <div class="wrap anatomy-grid">
+    <div>
+      <h2 class="section-title"><span class="tag">04</span> Every finding comes with its evidence</h2>
+      <p class="section-lede">The inspector says how sure it is, and why.</p>
+      <dl class="legend">
+        <div><dt><span class="chip chip-high">HIGH</span></dt><dd>Severity, from CRITICAL down to INFO. The same scale in every format.</dd></div>
+        <div><dt><span class="pill pill-confirmed">confirmed</span></dt><dd>Proven by the evidence, for example a value read from <code>.env</code>.</dd></div>
+        <div><dt><span class="pill pill-potential">potential</span></dt><dd>A risky pattern worth reviewing. These checks look at single expressions, so they never claim more than that.</dd></div>
+        <div><dt><span class="pill pill-detected">detected / inferred</span></dt><dd>Every fact says whether it was read directly, or derived from defaults, constraints or <code>.env.example</code>.</dd></div>
+      </dl>
+    </div>
+    <article class="finding" aria-label="Example finding">
+      <header class="finding-head">
+        <span class="chip chip-high">HIGH</span>
+        <span class="pill pill-potential">potential</span>
+        <code class="finding-id">sec.sql-injection</code>
+      </header>
+      <h3>Raw SQL built with request input</h3>
+      <p class="finding-label">Why it matters</p>
+      <p>Request input is concatenated or passed directly into a raw SQL expression, which allows SQL injection.</p>
+      <p class="finding-label">Evidence</p>
+      <pre class="evidence">app/Http/Controllers/ReportController.php:14
+$rows = DB::select("SELECT * FROM orders WHERE status = '" . $request-&gt;input('status') . "'");</pre>
+      <p class="finding-label">Fix</p>
+      <p>Use query builder methods or bindings: <code>whereRaw("email = ?", [$email])</code>. Never concatenate input into SQL.</p>
+    </article>
+  </div>
+</section>
+
+<!-- SAFETY -->
+<section class="section section-stripes" id="safety">
+  <div class="wrap">
+    <h2 class="section-title on-stripes"><span class="tag">05</span> Built for code you don't trust yet</h2>
+    <div class="guarantees">
+      <div class="guarantee">
+        <h3>Never modifies the project</h3>
+        <p>Files are read through a reader that has no write methods. Writing reports inside the project is refused, including via <code>..</code> or a symlink.</p>
+      </div>
+      <div class="guarantee">
+        <h3>Runs no project code</h3>
+        <p>It doesn't run <code>artisan</code>, never includes PHP files and never connects to the database. Running <code>artisan</code> or the project's tools needs a flag <em>and</em> your confirmation.</p>
+      </div>
+      <div class="guarantee">
+        <h3>Keeps secrets out</h3>
+        <p>Only harmless <code>.env</code> keys are read. Secret findings show a location and a masked prefix, never the value.</p>
+      </div>
+      <div class="guarantee">
+        <h3>Restricts external commands</h3>
+        <p>Allowlisted programs only, no shell, timeouts. Composer runs without the project's plugins and scripts.</p>
+      </div>
+      <div class="guarantee">
+        <h3>Logs every operation</h3>
+        <p>Each command and AI request is written to the audit log and listed in the report's Operations section.</p>
+      </div>
+      <div class="guarantee">
+        <h3>Sends nothing silently</h3>
+        <p>No telemetry. Packagist sees package names only, and <code>--offline</code> stops even that.</p>
+      </div>
+    </div>
+    <p class="review-note">An independent review of the safety-critical code found two real gaps before release. Both were fixed, and each has a regression test.</p>
+  </div>
+</section>
+
+<!-- AI -->
+<section class="section" id="ai">
+  <div class="wrap">
+    <h2 class="section-title"><span class="tag">06</span> AI explanations, on your terms</h2>
+    <p class="section-lede">Off by default. When you ask for it, the model gets the redacted results, never your code.</p>
+
+    <div class="ai-grid">
+      <div class="box box-mint">
+        <h3>What the model receives</h3>
+        <ul class="plain">
+          <li>Findings: rule ID, severity, confidence, explanation, evidence, fix</li>
+          <li>Facts such as versions and drivers, each with its source</li>
+          <li>Summary counts: routes, components, packages</li>
+        </ul>
+      </div>
+      <div class="box box-pink">
+        <h3>What it never receives</h3>
+        <ul class="plain">
+          <li>Source code</li>
+          <li><code>.env</code> files or any secret value</li>
+          <li>Your absolute paths (replaced by <code>&lt;project&gt;</code> and <code>~</code>)</li>
+          <li>The audit log or full route list</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="terminal terminal-inline">
+      <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="terminal-title">review before you send</span></div>
+<pre class="terminal-body"><span class="t-prompt">$</span> larainspect ai ./app --dry-run      <span class="t-muted"># prints the exact prompts, sends nothing</span>
+<span class="t-prompt">$</span> larainspect ai ./app --provider=anthropic
+<span class="t-prompt">$</span> larainspect ai --ai-task=documentation --provider=openrouter --model=anthropic/claude-opus-4.5</pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="brutal-table">
+        <caption>Providers: switch with <code>--provider</code>, and pass any model ID the provider accepts with <code>--model</code></caption>
+        <thead><tr><th>Provider</th><th>Setting</th><th>Default model</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Anthropic</td><td><code>ANTHROPIC_API_KEY</code></td><td><code>claude-opus-5-5</code></td><td>Messages API, version 2026-10-21; refusals handled</td></tr>
+          <tr><td>OpenAI</td><td><code>OPENAI_API_KEY</code></td><td>set <code>OPENAI_MODEL</code></td><td>Base URL override works with compatible servers</td></tr>
+          <tr><td>OpenRouter</td><td><code>OPENROUTER_API_KEY</code></td><td>set <code>OPENROUTER_MODEL</code></td><td>Cost reported when available</td></tr>
+          <tr><td>NoTokenLimit</td><td><code>NOTOKENLIMIT_API_KEY</code></td><td>set <code>NOTOKENLIMIT_MODEL</code></td><td>Third-party reseller; adapter based on observed API behaviour</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tasks">
+      <span class="task">explain-findings</span>
+      <span class="task">security-fixes</span>
+      <span class="task">technical-debt</span>
+      <span class="task task-dim">architecture</span>
+      <span class="task task-dim">dependencies</span>
+      <span class="task task-dim">documentation</span>
+      <span class="task task-dim">best-practices</span>
+    </div>
+    <p class="small">The first three run by default, one request each. AI output gets its own section, labelled <strong>AI-generated</strong>. It never adds findings or changes severities.</p>
+  </div>
+</section>
+
+<!-- REPORTS & CI -->
+<section class="section section-alt" id="reports">
+  <div class="wrap">
+    <h2 class="section-title"><span class="tag">07</span> Reports you can share, gates you can trust</h2>
+    <div class="formats">
+      <div class="format"><span class="format-ext">TTY</span><p>Colour terminal output. Add <code>-v</code> for evidence and fixes.</p></div>
+      <div class="format"><span class="format-ext">.md</span><p>Markdown for pull requests, wikis and tickets.</p></div>
+      <div class="format"><span class="format-ext">.html</span><p>One self-contained file with no external assets. <a href="sample-report.html">See one</a>.</p></div>
+      <div class="format"><span class="format-ext">.json</span><p>Stable schema for tooling. <code>report</code> can re-render it later.</p></div>
+    </div>
+
+    <div class="ci-grid">
+      <div class="terminal">
+        <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="terminal-title">.github/workflows/inspect.yml</span></div>
+<pre class="terminal-body">- run: |
+    git clone --depth 1 https://github.com/mrunknown0001/laravel-project-inspector.git inspector
+    composer install --no-dev --working-dir=inspector
+- run: php inspector/bin/larainspect inspect app \
+    --format=markdown --output=inspection.md --fail-on=high</pre>
+      </div>
+      <table class="brutal-table exit-codes">
+        <caption>Exit codes</caption>
+        <tbody>
+          <tr><th>0</th><td>Success</td></tr>
+          <tr><th>1</th><td>Error: invalid path, not a Laravel app, or an unconfigured AI provider</td></tr>
+          <tr><th>2</th><td>A finding met the <code>--fail-on</code> threshold</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section class="section" id="install">
+  <div class="wrap">
+    <h2 class="section-title"><span class="tag">08</span> Install in a minute</h2>
+    <p class="section-lede">You need PHP 8.3+ and Composer 2. It lives in its own folder, not inside your project.</p>
+
+    <div class="tabs">
+      <input type="radio" name="os" id="tab-unix" checked>
+      <label for="tab-unix">Linux · macOS · WSL</label>
+      <input type="radio" name="os" id="tab-win">
+      <label for="tab-win">Windows</label>
+      <input type="radio" name="os" id="tab-composer">
+      <label for="tab-composer">Composer global</label>
+
+      <div class="tab-panel" id="panel-unix">
+<pre class="install"><span class="t-prompt">$</span> git clone https://github.com/mrunknown0001/laravel-project-inspector.git ~/tools/laravel-project-inspector
+<span class="t-prompt">$</span> cd ~/tools/laravel-project-inspector &amp;&amp; composer install --no-dev
+<span class="t-prompt">$</span> ln -s "$PWD/bin/larainspect" ~/.local/bin/larainspect
+<span class="t-prompt">$</span> cd ~ &amp;&amp; larainspect inspect ~/projects/shop</pre>
+      </div>
+      <div class="tab-panel" id="panel-win">
+<pre class="install"><span class="t-prompt">&gt;</span> git clone https://github.com/mrunknown0001/laravel-project-inspector.git C:\Tools\laravel-project-inspector
+<span class="t-prompt">&gt;</span> cd C:\Tools\laravel-project-inspector
+<span class="t-prompt">&gt;</span> composer install --no-dev
+<span class="t-prompt">&gt;</span> bin\larainspect.bat inspect C:\Projects\shop</pre>
+      </div>
+      <div class="tab-panel" id="panel-composer">
+<pre class="install"><span class="t-prompt">$</span> composer global config repositories.larainspect vcs https://github.com/mrunknown0001/laravel-project-inspector.git
+<span class="t-prompt">$</span> composer global require larainspect/laravel-project-inspector:dev-main
+<span class="t-prompt">$</span> larainspect inspect ~/projects/shop</pre>
+      </div>
+    </div>
+    <p class="small">Full instructions, including adding it to <code>PATH</code> on Windows and troubleshooting, are in the <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/docs/installation.md">installation guide</a>.</p>
+  </div>
+</section>
+
+<!-- HONEST -->
+<section class="section section-alt" id="limits">
+  <div class="wrap honest-grid">
+    <div>
+      <h2 class="section-title"><span class="tag">09</span> Where it stands</h2>
+      <table class="brutal-table">
+        <tbody>
+          <tr><th>Linux, WSL</th><td>Developed and used on real projects; CI on PHP 8.3, 8.4, 8.5</td></tr>
+          <tr><th>macOS</th><td>Full test suite passes in CI; not yet tried on real projects</td></tr>
+          <tr><th>Windows</th><td>Test suite passes in CI; not yet tried on real projects</td></tr>
+          <tr><th>Laravel</th><td>8 and later; older versions best-effort; Lumen not supported</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box box-white">
+      <h3>What it can't do</h3>
+      <ul class="plain">
+        <li>It can't see routes that packages register at runtime, unless you pass <code>--use-artisan</code>.</li>
+        <li>Code-pattern checks don't follow data through variables. A <em>potential</em> finding needs review, and a clean report doesn't prove the code is safe.</li>
+        <li>It doesn't replace a security audit or a penetration test.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap final-inner">
+    <h2>Point it at a project.<br>Read the report.</h2>
+    <div class="cta-row">
+      <a class="btn btn-yellow btn-lg" href="https://github.com/mrunknown0001/laravel-project-inspector">Get it on GitHub</a>
+      <a class="btn btn-white btn-lg" href="sample-report.html">Open a real report</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="logo logo-footer" href="#top"><span class="logo-bracket">[</span>larainspect<span class="logo-bracket">]</span></a>
+      <p>Laravel Project Inspector · MIT License</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h3>Docs</h3>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/docs/installation.md">Installation</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/docs/commands.md">Command reference</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/docs/ai-providers.md">AI providers</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/docs/security-and-privacy.md">Security &amp; privacy</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/docs/extending.md">Extending</a>
+    </nav>
+    <nav aria-label="Project">
+      <h3>Project</h3>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector">Source code</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/issues">Issues</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/blob/main/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/mrunknown0001/laravel-project-inspector/actions/workflows/tests.yml">CI status</a>
+    </nav>
+  </div>
+  <p class="wrap disclaimer">Laravel is a trademark of Taylor Otwell. This is an independent project and is not affiliated with or endorsed by Laravel.</p>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>

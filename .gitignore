@@ -12,3 +12,5 @@
 *.swp
 .DS_Store
 Thumbs.db
+/website/.vercel
+/website/.env*
