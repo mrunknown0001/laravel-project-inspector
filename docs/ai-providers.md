@@ -8,11 +8,15 @@ provider unless you run `larainspect ai`, pass `--ai`, or set `AI_ENABLED=true`.
 Settings come from, in order of priority:
 
 1. environment variables (`export ANTHROPIC_API_KEY=...`, CI secrets),
-2. the inspector's own `.env` file (`larainspect config:init` creates it from `.env.example`),
+2. a settings file: `LARAINSPECT_ENV_FILE` if set, else `.env` in the inspector directory, else the
+   per-user file `~/.config/larainspect/.env` (`%APPDATA%\larainspect\.env` on Windows),
 3. built-in defaults.
 
-The `.env` file belongs to the inspector, not to the project being inspected, and is git-ignored.
-`larainspect config:show` lists every setting and where it came from, with API keys masked.
+`larainspect config:init` creates the settings file from `.env.example` with mode 600 - in the
+inspector directory for git checkouts, or the per-user location when the inspector was installed
+with Composer (`--user` forces the per-user file). The file belongs to the inspector, never to the
+project being inspected. `larainspect config:show` shows which file is in use and where every
+setting came from, with API keys masked.
 
 ### General settings
 

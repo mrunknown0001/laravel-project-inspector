@@ -55,7 +55,12 @@ final class Inspector
         );
 
         // Redact everything once, at the boundary, so no reporter can leak a secret.
-        return InspectionReport::fromArray($context->redactor->redactArray($report->toArray()));
+        $data = $context->redactor->redactArray($report->toArray());
+        // The root path is not secret, and it guards where reports may be written: it must
+        // survive redaction even if part of it equals a .env value (e.g. DB_DATABASE=shop).
+        $data['project']['root'] = $context->project->root;
+
+        return InspectionReport::fromArray($data);
     }
 
     /**

@@ -41,11 +41,13 @@ final class AIConfig
      * @param array<string, array<string, mixed>> $providers config/providers.php
      * @param array<string, string>               $environment Process environment.
      * @param array<string, string>               $file        Parsed inspector .env.
+     * @param string|null                         $settingsFile Path the file values came from.
      */
     public function __construct(
         private readonly array $providers,
         private readonly array $environment,
         private readonly array $file = [],
+        private readonly ?string $settingsFile = null,
     ) {
     }
 
@@ -58,11 +60,63 @@ final class AIConfig
         if (!is_array($providers)) {
             throw new \RuntimeException('config/providers.php must return an array.');
         }
-        $envFile = $basePath . '/.env';
-        $file = is_file($envFile) && is_readable($envFile) ? (new EnvFileParser())->parse((string) file_get_contents($envFile)) : [];
+        $environment ??= self::processEnvironment();
+        $envFile = self::settingsFile($basePath, $environment);
+        $file = $envFile !== null ? (new EnvFileParser())->parse((string) file_get_contents($envFile)) : [];
 
         /** @var array<string, array<string, mixed>> $providers */
-        return new self($providers, $environment ?? self::processEnvironment(), $file);
+        return new self($providers, $environment, $file, $envFile);
+    }
+
+    /**
+     * The settings file in use: LARAINSPECT_ENV_FILE, else the inspector's own
+     * .env (git checkouts), else the per-user file (Composer installs, where the
+     * inspector lives under vendor/ and would lose its .env on update).
+     *
+     * @param array<string, string> $environment
+     */
+    public static function settingsFile(string $basePath, array $environment): ?string
+    {
+        $candidates = array_filter([
+            $environment['LARAINSPECT_ENV_FILE'] ?? null,
+            $basePath . DIRECTORY_SEPARATOR . '.env',
+            self::userSettingsPath($environment),
+        ]);
+        foreach ($candidates as $candidate) {
+            if (is_file($candidate) && is_readable($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * ~/.config/larainspect/.env ($XDG_CONFIG_HOME respected), or %APPDATA%\larainspect\.env on Windows.
+     *
+     * @param array<string, string> $environment
+     */
+    public static function userSettingsPath(array $environment): ?string
+    {
+        if (DIRECTORY_SEPARATOR === '\\' && isset($environment['APPDATA'])) {
+            return $environment['APPDATA'] . '\\larainspect\\.env';
+        }
+        $base = $environment['XDG_CONFIG_HOME'] ?? (isset($environment['HOME']) ? $environment['HOME'] . '/.config' : null);
+
+        return $base === null ? null : $base . '/larainspect/.env';
+    }
+
+    public function settingsFilePath(): ?string
+    {
+        return $this->settingsFile;
+    }
+
+    /**
+     * Whether the inspector runs from a Composer vendor/ directory.
+     */
+    public static function installedAsDependency(string $basePath): bool
+    {
+        return str_contains(str_replace('\\', '/', $basePath), '/vendor/');
     }
 
     /**

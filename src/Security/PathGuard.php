@@ -108,14 +108,17 @@ final class PathGuard
     }
 
     /**
-     * Whether $path equals $directory or lies beneath it. Case-insensitive on Windows.
+     * Whether $path equals $directory or lies beneath it. Case-insensitive on Windows,
+     * or when asked (write-side checks pass true on macOS, whose default file system
+     * ignores case, so a differently-cased path cannot slip past them).
      */
-    public static function isWithin(string $path, string $directory): bool
+    public static function isWithin(string $path, string $directory, ?bool $caseInsensitive = null): bool
     {
-        $normalise = static function (string $p): string {
+        $caseInsensitive ??= DIRECTORY_SEPARATOR === '\\';
+        $normalise = static function (string $p) use ($caseInsensitive): string {
             $p = rtrim(str_replace('\\', '/', $p), '/');
 
-            return DIRECTORY_SEPARATOR === '\\' ? strtolower($p) : $p;
+            return $caseInsensitive ? mb_strtolower($p) : $p;
         };
         $path = $normalise($path);
         $directory = $normalise($directory);

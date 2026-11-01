@@ -217,6 +217,29 @@ final class CommandTest extends TestCase
         self::assertSame($before, Fixtures::fingerprint($project), 'Nothing was written into the project.');
     }
 
+    public function testRedactedPathSegmentsCannotBypassTheOutputGuard(): void
+    {
+        // Regression: DB_DATABASE equal to the folder name used to redact the stored root.
+        $project = $this->makeProject([]);
+        $root = $this->tempDir() . '/shop_api2';
+        rename($project, $root);
+        foreach (['artisan' => '<?php', 'composer.json' => '{"require": {"laravel/framework": "^11.0"}}', 'bootstrap/app.php' => '<?php', '.env' => "APP_ENV=local\nDB_DATABASE=shop_api2\n"] as $file => $contents) {
+            if (!is_dir(dirname($root . '/' . $file))) {
+                mkdir(dirname($root . '/' . $file), 0o777, true);
+            }
+            file_put_contents($root . '/' . $file, $contents);
+        }
+        $before = Fixtures::fingerprint($root);
+
+        $tester = $this->runCommand('inspect', ['path' => $root, '--offline' => true, '--no-save' => true, '--format' => 'json', '--output' => $root . '/INSIDE.json']);
+        self::assertSame(1, $tester->getStatusCode());
+        self::assertStringContainsString('inside the inspected project', (string) preg_replace('/\s+/', ' ', $tester->getDisplay()));
+
+        $tester = $this->runCommand('inspect', ['path' => $root, '--offline' => true, '--format' => 'json']);
+        self::assertSame(0, $tester->getStatusCode());
+        self::assertSame($before, Fixtures::fingerprint($root));
+    }
+
     public function testReportRendersTheLatestSavedResults(): void
     {
         $missing = $this->runCommand('report', []);

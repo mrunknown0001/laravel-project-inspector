@@ -80,6 +80,34 @@ final class AIConfigTest extends TestCase
         self::assertSame('$(whoami)', $config->provider('openai')->model);
     }
 
+    public function testSettingsFileResolutionOrder(): void
+    {
+        $home = $this->tempDir() . '/home';
+        $base = $this->makeProject(['config/providers.php' => (string) file_get_contents(dirname(__DIR__, 3) . '/config/providers.php')]);
+        $env = ['HOME' => $home];
+
+        self::assertNull(AIConfig::settingsFile($base, $env));
+        self::assertSame($home . '/.config/larainspect/.env', AIConfig::userSettingsPath($env));
+        self::assertSame('/xdg/larainspect/.env', AIConfig::userSettingsPath(['HOME' => $home, 'XDG_CONFIG_HOME' => '/xdg']));
+
+        mkdir($home . '/.config/larainspect', 0o700, true);
+        file_put_contents($home . '/.config/larainspect/.env', "AI_PROVIDER=openrouter\n");
+        self::assertSame($home . '/.config/larainspect/.env', AIConfig::settingsFile($base, $env), 'Per-user file as the fallback.');
+        self::assertSame('openrouter', AIConfig::load($base, $env)->defaultProvider());
+
+        file_put_contents($base . '/.env', "AI_PROVIDER=openai\n");
+        self::assertSame($base . '/.env', AIConfig::settingsFile($base, $env), 'The inspector directory wins over the per-user file.');
+
+        $explicit = $this->tempDir() . '/custom.env';
+        file_put_contents($explicit, "AI_PROVIDER=anthropic\n");
+        $loaded = AIConfig::load($base, $env + ['LARAINSPECT_ENV_FILE' => $explicit]);
+        self::assertSame('anthropic', $loaded->defaultProvider(), 'LARAINSPECT_ENV_FILE wins.');
+        self::assertSame($explicit, $loaded->settingsFilePath());
+
+        self::assertTrue(AIConfig::installedAsDependency('/home/me/.composer/vendor/larainspect/laravel-project-inspector'));
+        self::assertFalse(AIConfig::installedAsDependency('/home/me/tools/laravel-project-inspector'));
+    }
+
     public function testManagerResolvesProviders(): void
     {
         $manager = new AIManager(self::config(['AI_PROVIDER' => 'notokenlimit']), (new RecordingHttpClient())->client);

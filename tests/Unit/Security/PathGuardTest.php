@@ -95,5 +95,7 @@ final class PathGuardTest extends TestCase
         self::assertTrue(PathGuard::isWithin('/srv/app', '/srv/app/'));
         self::assertFalse(PathGuard::isWithin('/srv/application', '/srv/app'));
         self::assertFalse(PathGuard::isWithin('/srv', '/srv/app'));
+        self::assertTrue(PathGuard::isWithin('/Users/Me/Shop/reports', '/users/me/shop', true), 'Write-side checks on case-insensitive file systems.');
+        self::assertFalse(PathGuard::isWithin('/Users/Me/Shop/reports', '/users/me/shop', false));
     }
 }

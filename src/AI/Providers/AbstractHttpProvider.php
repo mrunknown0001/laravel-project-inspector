@@ -128,6 +128,8 @@ abstract class AbstractHttpProvider implements AIProviderInterface
                     'json' => $json,
                     'timeout' => $this->config->timeout,
                     'max_duration' => $this->config->timeout,
+                    // Never follow redirects: some key headers (x-api-key) would be forwarded to the new host.
+                    'max_redirects' => 0,
                 ], static fn (mixed $v): bool => $v !== null));
                 $status = $response->getStatusCode();
                 $content = $response->getContent(false);
@@ -201,6 +203,12 @@ abstract class AbstractHttpProvider implements AIProviderInterface
         $message = sprintf('%s API error (HTTP %d): %s', $this->config->label, $status, $detail);
 
         return match (true) {
+            $status >= 300 && $status < 400 => new RequestRejectedException(sprintf(
+                '%s answered with a redirect (HTTP %d). Redirects are not followed, so credentials are never sent to another address; check %s_BASE_URL.',
+                $this->config->label,
+                $status,
+                strtoupper($this->config->name),
+            )),
             $status === 401, $status === 403 => new AuthenticationException($message),
             $status === 408 => new TimeoutException($message),
             $status === 429 => new RateLimitException($message, self::retryAfter($headers)),

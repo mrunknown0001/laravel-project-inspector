@@ -37,6 +37,11 @@ final class SecretRedactorTest extends TestCase
         yield 'slack token' => ['xoxb-' . '123456789012-abcdefghij', 'xoxb-' . '123456789012-abcdefghij'];
         yield 'stripe key' => ['sk_' . 'live_' . $alnum, 'sk_' . 'live_' . $alnum];
         yield 'jwt' => ['Bearer eyJ' . $alnum . '.eyJ' . $alnum . '.' . $alnum, 'eyJ' . $alnum . '.eyJ' . $alnum];
+        yield 'hash inside an unquoted value' => ['API_TOKEN=xyz#1abc', 'xyz#1abc'];
+        yield 'escaped quote in a quoted value' => ['KEY="ab\\"cd-rest-of-secret"', 'rest-of-secret'];
+        yield 'lower-case key' => ['db_password=hunter2-lower', 'hunter2-lower'];
+        yield 'env default' => ["env('DB_PASSWORD', 'fallback-secret-1')", 'fallback-secret-1'];
+        yield 'at sign in url password' => ['mysql://user:p@ss-word@db.internal/app', 'ss-word'];
         yield 'private key' => ["-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA\n-----END RSA PRIVATE KEY-----", 'MIIEpAIBAAKCAQEA'];
     }
 

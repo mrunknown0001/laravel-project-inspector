@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LaraInspect\Process;
 
 use LaraInspect\Model\AuditEntry;
-use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException as SymfonyProcessException;
 use Symfony\Component\Process\Process;
@@ -21,7 +20,7 @@ final class SafeProcessRunner implements ProcessRunnerInterface
 {
     public const DEFAULT_ALLOWLIST = ['composer', 'php', 'node', 'npm', 'pnpm', 'yarn', 'bun', 'git'];
 
-    private readonly ExecutableFinder $finder;
+    private readonly ExecutableLocator $finder;
 
     /** @var array<string, string|null> */
     private array $resolved = [];
@@ -35,8 +34,9 @@ final class SafeProcessRunner implements ProcessRunnerInterface
         private readonly ConfirmationInterface $confirmation = new DenyAllConfirmation(),
         private readonly bool $offline = false,
         private readonly array $allowlist = self::DEFAULT_ALLOWLIST,
+        ?ExecutableLocator $locator = null,
     ) {
-        $this->finder = new ExecutableFinder();
+        $this->finder = $locator ?? new ExecutableLocator();
     }
 
     public function isAvailable(string $executable): bool

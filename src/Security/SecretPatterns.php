@@ -27,7 +27,7 @@ final class SecretPatterns
     ];
 
     /** scheme://user:password@host */
-    public const URL_CREDENTIALS = '#\b([a-z][a-z0-9+.\-]*://)([^:/\s@\'"]*):([^@/\s\'"]+)@#i';
+    public const URL_CREDENTIALS = '#\b([a-z][a-z0-9+.\-]*://)([^:/\s@\'"]*):([^/\s\'"]+)@#i';
 
     /** Key names whose values are credentials, for PHP/JSON/YAML style assignments. */
     public const SENSITIVE_KEY_NAME = '/^[A-Za-z0-9_.\-]*(?:password|passwd|secret|token|api_?key|private_?key|access_?key|auth_?key|credentials?|dsn|salt)[A-Za-z0-9_.\-]*$/i';

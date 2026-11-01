@@ -53,10 +53,15 @@ final class PromptBuilder
         ['evidence' => 0, 'max_findings' => 10, 'data' => false],
     ];
 
+    /**
+     * @param string|null $homeDirectory Replaced by "~"; defaults to HOME / USERPROFILE.
+     */
     public function __construct(
         private readonly SecretRedactor $redactor,
         private readonly int $maxInputChars = 60_000,
+        private ?string $homeDirectory = null,
     ) {
+        $this->homeDirectory ??= (getenv('HOME') ?: getenv('USERPROFILE')) ?: null;
     }
 
     /**
@@ -64,6 +69,9 @@ final class PromptBuilder
      */
     public function build(InspectionReport $report, AITask $task, ?int $maxTokens = null): array
     {
+        // Scrub local paths from the raw strings first: before truncation (which could cut a
+        // path in half) and before JSON encoding (which escapes backslashes and quotes).
+        $report = $this->withoutLocalPaths($report);
         $notes = [];
         $json = '';
         foreach (self::REDUCTION_LEVELS as $index => $level) {
@@ -115,10 +123,42 @@ final class PromptBuilder
         }
 
         $json = (string) json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
-        // The absolute path can contain a user name; it is never needed.
-        $json = str_replace([$project->root, str_replace('/', '\\/', $project->root)], '<project>', $json);
 
         return $this->redactor->redact($json);
+    }
+
+    /**
+     * Replaces the project root with "<project>" and the home directory with "~" in every
+     * string, in all slash styles and regardless of case. Absolute paths can contain a user
+     * name and are never needed by the model.
+     */
+    private function withoutLocalPaths(InspectionReport $report): InspectionReport
+    {
+        $replacements = [];
+        foreach ([$report->project->root => '<project>', (string) $this->homeDirectory => '~'] as $path => $placeholder) {
+            $path = rtrim((string) $path, '/\\');
+            if (strlen($path) < 2) {
+                continue;
+            }
+            foreach ([$path, str_replace('\\', '/', $path), str_replace('/', '\\', $path)] as $variant) {
+                $replacements[$variant] = $placeholder;
+            }
+        }
+        if ($replacements === []) {
+            return $report;
+        }
+        // Longest first, so the project root (inside the home directory) wins.
+        uksort($replacements, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
+
+        $data = $report->toArray();
+        array_walk_recursive($data, static function (mixed &$value) use ($replacements): void {
+            if (is_string($value)) {
+                $value = str_ireplace(array_keys($replacements), array_values($replacements), $value);
+            }
+        });
+
+        /** @var array<string, mixed> $data */
+        return InspectionReport::fromArray($data);
     }
 
     /**

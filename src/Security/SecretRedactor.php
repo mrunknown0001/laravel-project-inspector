@@ -78,10 +78,18 @@ final class SecretRedactor
         // scheme://user:password@host keeps the user so the host is still identifiable.
         $text = preg_replace(SecretPatterns::URL_CREDENTIALS, '$1$2:' . self::MASK . '@', $text) ?? $text;
 
-        // ENV style: DB_PASSWORD=value, export API_KEY="value"
+        // ENV style: DB_PASSWORD=value, export API_KEY="value", db_password=value.
+        // An unquoted value runs to the next whitespace ("#" can be part of it).
         $text = preg_replace(
-            '/\b([A-Z0-9_]*(?:' . self::SENSITIVE_WORDS . ')[A-Z0-9_]*)(\s*=\s*)("[^"\n]*"|\'[^\'\n]*\'|[^\s#]+)/',
+            '/\b([A-Z0-9_]*(?:' . self::SENSITIVE_WORDS . ')[A-Z0-9_]*)(\s*=\s*)("(?:[^"\\\\\n]|\\\\.)*"|\'[^\'\n]*\'|\S+)/i',
             '$1$2' . self::MASK,
+            $text,
+        ) ?? $text;
+
+        // env('DB_PASSWORD', 'fallback-secret')
+        $text = preg_replace(
+            '/(env\(\s*([\'"])[A-Z0-9_]*(?:' . self::SENSITIVE_WORDS . ')[A-Z0-9_]*\2\s*,\s*)([\'"])(?:(?!\3)[^\\\\\n]|\\\\.)+\3/i',
+            '$1$3' . self::MASK . '$3',
             $text,
         ) ?? $text;
 

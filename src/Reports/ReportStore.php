@@ -50,7 +50,7 @@ final class ReportStore
      */
     public function ensureDirectory(): void
     {
-        if ($this->protectedRoot !== null && PathGuard::isWithin(self::normalise($this->directory), $this->protectedRoot)) {
+        if ($this->protectedRoot !== null && PathGuard::isWithin(self::normalise($this->directory), self::normalise($this->protectedRoot), self::caseInsensitiveFileSystem())) {
             throw new InspectorException(sprintf(
                 'Refusing to write to "%s": it is inside the inspected project. Run the command from another directory, or use --no-save with --output pointing outside the project.',
                 $this->directory,
@@ -135,9 +135,17 @@ final class ReportStore
 
     private function assertWritable(string $path): void
     {
-        if ($this->protectedRoot !== null && PathGuard::isWithin(self::normalise($path), $this->protectedRoot)) {
+        if ($this->protectedRoot !== null && PathGuard::isWithin(self::normalise($path), self::normalise($this->protectedRoot), self::caseInsensitiveFileSystem())) {
             throw new InspectorException(sprintf('Refusing to write "%s": it is inside the inspected project.', $path));
         }
+    }
+
+    /**
+     * Windows and macOS default to case-insensitive file systems; refusing more is the safe direction.
+     */
+    private static function caseInsensitiveFileSystem(): bool
+    {
+        return in_array(PHP_OS_FAMILY, ['Windows', 'Darwin'], true);
     }
 
     private static function absolute(string $path, string $cwd): string

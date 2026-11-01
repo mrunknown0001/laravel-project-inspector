@@ -66,6 +66,19 @@ final class InspectorTest extends TestCase
         self::assertSame(['own.security'], array_map(static fn ($f) => $f->id, $report->results[1]->findings));
     }
 
+    public function testTheProjectRootSurvivesRedaction(): void
+    {
+        // A .env value that also appears in the project path (DB_DATABASE equal to the folder name)
+        // must not turn the root into ".../[REDACTED]": the root guards where reports may be written.
+        $redactor = new SecretRedactor();
+        $context = Fixtures::context(Fixtures::project('laravel-8'), redactor: $redactor);
+        $redactor->addKnownSecrets(['laravel-8', 'Fixtures/projects/laravel-8']);
+
+        $report = (new Inspector('1.0.0', new AuditLog($redactor)))->inspect($context, [AnalyzerRegistryTest::analyzer('x')]);
+
+        self::assertSame(Fixtures::reader(Fixtures::project('laravel-8'))->root(), $report->project->root);
+    }
+
     public function testEverythingIsRedactedIncludingValuesOnlyKnownFromDotEnv(): void
     {
         // The laravel-8 fixture's .env holds DB_PASSWORD="Fixture-DB-Pass-8812".

@@ -121,6 +121,29 @@ final class PromptAndAnalyzerTest extends TestCase
         }
     }
 
+    public function testLocalPathsAreRemovedInEveryFormBeforeTruncation(): void
+    {
+        foreach (['C:\\Users\\adam\\sites\\shop', '/home/adam/we"ird/shop'] as $root) {
+            $data = \LaraInspect\Tests\Support\SampleReport::create($root)->toArray();
+            $data['results'][0]['notes'] = [str_repeat('x', 280) . ' see ' . $root . '/storage/logs/laravel.log for details'];
+            $data['results'][1]['findings'][1]['evidence'] = 'In ' . $root . '\\app\\Http\\Kernel.php and ' . strtoupper($root) . '/routes/web.php';
+            /** @var array<string, mixed> $data */
+            $report = InspectionReport::fromArray($data);
+
+            [$request] = (new PromptBuilder(new SecretRedactor(), 200_000, '/home/adam'))->build($report, TaskCatalog::all()['explain-findings']);
+            $prompt = self::userMessage($request);
+
+            self::assertStringNotContainsString('adam', $prompt, 'No part of a local path may reach the provider: ' . $root);
+            self::assertStringContainsString('<project>', $prompt);
+        }
+
+        [$home] = (new PromptBuilder(new SecretRedactor(), 200_000, '/home/adam'))->build(
+            InspectionReport::fromArray(['results' => [['analyzer' => 'environment', 'title' => 'Environment', 'notes' => ['Cache in /home/adam/.cache/composer']]]] + \LaraInspect\Tests\Support\SampleReport::create('/srv/app')->toArray()),
+            TaskCatalog::all()['explain-findings'],
+        );
+        self::assertStringContainsString('~/.cache/composer', self::userMessage($home));
+    }
+
     public function testTasksOnlyIncludeTheirAnalyzers(): void
     {
         $builder = new PromptBuilder(new SecretRedactor(), 200_000);

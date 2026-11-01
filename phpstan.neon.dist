@@ -4,6 +4,7 @@ parameters:
         - src
         - tests
         - bin/larainspect
+        - tools
     excludePaths:
         - tests/Fixtures
     treatPhpDocTypesAsCertain: false

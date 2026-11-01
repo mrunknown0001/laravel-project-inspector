@@ -13,7 +13,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
  */
 final class RecordingHttpClient
 {
-    /** @var list<array{method: string, url: string, headers: array<string, string>, body: array<mixed>|null}> */
+    /** @var list<array{method: string, url: string, headers: array<string, string>, body: array<mixed>|null, max_redirects: int|null}> */
     public array $requests = [];
 
     /** @var list<MockResponse> */
@@ -33,7 +33,7 @@ final class RecordingHttpClient
                 }
             }
             $body = isset($options['body']) && is_string($options['body']) && $options['body'] !== '' ? json_decode($options['body'], true) : null;
-            $this->requests[] = ['method' => $method, 'url' => $url, 'headers' => $headers, 'body' => is_array($body) ? $body : null];
+            $this->requests[] = ['method' => $method, 'url' => $url, 'headers' => $headers, 'body' => is_array($body) ? $body : null, 'max_redirects' => is_int($options['max_redirects'] ?? null) ? $options['max_redirects'] : null];
 
             $response = array_shift($this->queue);
             if ($response === null) {
@@ -61,7 +61,7 @@ final class RecordingHttpClient
     }
 
     /**
-     * @return array{method: string, url: string, headers: array<string, string>, body: array<mixed>|null}
+     * @return array{method: string, url: string, headers: array<string, string>, body: array<mixed>|null, max_redirects: int|null}
      */
     public function last(): array
     {

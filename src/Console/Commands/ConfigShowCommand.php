@@ -30,7 +30,7 @@ final class ConfigShowCommand extends Command
         $io->definitionList(
             ['Version' => $this->services->version()],
             ['Base directory' => $this->services->basePath],
-            ['Settings file' => is_file($this->services->basePath . '/.env') ? $this->services->basePath . '/.env' : 'none (run "larainspect config:init")'],
+            ['Settings file' => $this->services->aiConfig()->settingsFilePath() ?? 'none (run "larainspect config:init")'],
             ['Output directory' => './' . $this->services->outputDirectory()],
             ['Process timeout' => $config->int('process_timeout') . ' s'],
             ['Network timeout' => $config->int('network_process_timeout') . ' s'],

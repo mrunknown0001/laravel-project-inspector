@@ -419,6 +419,24 @@ final class ProvidersTest extends TestCase
         self::assertSame([], $this->provider($class, $http, $name, 'http://localhost:8080/v1', key: 'ntl_live_local_test_key')->validateConfiguration());
     }
 
+    /**
+     * @param class-string<AbstractHttpProvider> $class
+     */
+    #[DataProvider('providers')]
+    public function testRedirectsAreNeverFollowed(string $class, string $name, string $baseUrl): void
+    {
+        $http = new RecordingHttpClient(RecordingHttpClient::json([], 302, ['location' => 'https://attacker.example.test/collect']));
+
+        try {
+            $this->provider($class, $http, $name, $baseUrl)->chat(self::request());
+            self::fail('Expected the redirect to be rejected.');
+        } catch (RequestRejectedException $e) {
+            self::assertStringContainsString('Redirects are not followed', $e->getMessage());
+        }
+        self::assertCount(1, $http->requests);
+        self::assertSame(0, $http->last()['max_redirects'], 'Key headers such as x-api-key must never reach another host.');
+    }
+
     public function testEveryRequestIsAuditedWithoutTheKey(): void
     {
         $audit = new AuditLog(new SecretRedactor());

@@ -40,6 +40,9 @@ abstract class AbstractInspectionCommand extends Command
     protected ?AuditLog $audit = null;
     protected ?SecretRedactor $redactor = null;
 
+    /** Real root of the inspected project (from PathGuard), never taken from report data. */
+    protected ?string $protectedRoot = null;
+
     public function __construct(
         protected readonly Services $services,
     ) {
@@ -195,6 +198,7 @@ abstract class AbstractInspectionCommand extends Command
     {
         $services = $this->services;
         $guard = $services->guard($path);
+        $this->protectedRoot = $guard->root();
         $noSave = (bool) $input->getOption('no-save');
 
         $analyzers = $services->analyzers()->select(
@@ -241,7 +245,7 @@ abstract class AbstractInspectionCommand extends Command
         if ((bool) $input->getOption('no-save')) {
             return;
         }
-        $saved = $this->store($report->project->root)->write($report, new JsonReporter());
+        $saved = $this->store($this->protectedRoot ?? $report->project->root)->write($report, new JsonReporter());
         $this->progressOutput($output)?->writeln(sprintf('<fg=gray>Results saved to %s</>', $saved));
     }
 
@@ -268,7 +272,7 @@ abstract class AbstractInspectionCommand extends Command
             throw new \InvalidArgumentException('--no-save with a file format needs --output (a path, or "-" for standard output).');
         }
 
-        $path = $this->store($report->project->root)->write($report, $reporter, $target, (string) getcwd());
+        $path = $this->store($this->protectedRoot ?? $report->project->root)->write($report, $reporter, $target, (string) getcwd());
         $io->success(sprintf('%s report written to %s', ucfirst($format), $path));
     }
 

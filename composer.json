@@ -3,7 +3,14 @@
     "description": "Read-only CLI that inspects Laravel projects and generates technical reports, with optional AI-assisted analysis.",
     "type": "project",
     "license": "MIT",
-    "keywords": ["laravel", "inspector", "cli", "security", "audit", "report"],
+    "keywords": [
+        "laravel",
+        "inspector",
+        "cli",
+        "security",
+        "audit",
+        "report"
+    ],
     "require": {
         "php": "^8.3",
         "ext-json": "*",
@@ -35,7 +42,11 @@
     "scripts": {
         "test": "phpunit",
         "analyse": "phpstan analyse --memory-limit=512M",
-        "check": ["@analyse", "@test"]
+        "check": [
+            "@analyse",
+            "@test"
+        ],
+        "docs": "@php tools/generate-command-reference.php"
     },
     "config": {
         "sort-packages": true,
@@ -43,5 +54,15 @@
         "platform-check": true
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "archive": {
+        "exclude": [
+            "/tests",
+            "/tools",
+            "/docs/examples",
+            "/reports",
+            "phpunit.xml.dist",
+            "phpstan.neon.dist"
+        ]
+    }
 }
