@@ -67,9 +67,8 @@ Windows notes:
 - Paths are case-insensitive for the "never write inside the inspected project" check.
 - The per-user settings file is `%APPDATA%\larainspect\.env`.
 - The test suite skips symlink tests on Windows, where creating symlinks needs extra privileges.
-- The inspector has been developed and tested on Linux and WSL. Windows support is implemented
-  (launcher, path handling, executable lookup through `PATHEXT`) but has not been run on a Windows
-  machine yet; please report problems.
+- The test suite passes on Windows in CI (PHP 8.3), but the inspector has not yet been used on
+  real projects on Windows; please report problems.
 
 ## WSL (Windows Subsystem for Linux)
 

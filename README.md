@@ -260,9 +260,11 @@ Exit codes:
 
 | Platform | Status |
 |---|---|
-| Linux, WSL | Developed and tested. |
-| macOS | Expected to work; uses the same code paths as Linux. |
-| Windows | Implemented (`.bat` launcher, path handling, `PATHEXT` lookup) but not yet tested on a Windows machine. |
+| Linux, WSL | Developed and used on real projects; the test suite runs in CI on PHP 8.3, 8.4 and 8.5. |
+| macOS | The full test suite passes in CI (PHP 8.3). Not yet tried on real projects. |
+| Windows | The test suite passes in CI (PHP 8.3); symlink and POSIX-permission tests are skipped there. Not yet tried on real projects. |
+
+Problem reports from macOS and Windows are especially welcome.
 
 Inspected projects can use Laravel 8 or later. Older versions are inspected on a best-effort basis
 and the report says so. Lumen is recognised but not supported.
