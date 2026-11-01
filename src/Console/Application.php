@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace LaraInspect\Console;
 
+use LaraInspect\Console\Commands\AiCommand;
+use LaraInspect\Console\Commands\AiModelsCommand;
+use LaraInspect\Console\Commands\AiProvidersCommand;
 use LaraInspect\Console\Commands\ArchitectureCommand;
+use LaraInspect\Console\Commands\ConfigInitCommand;
+use LaraInspect\Console\Commands\ConfigShowCommand;
+use LaraInspect\Console\Commands\ConfigTestCommand;
 use LaraInspect\Console\Commands\DependenciesCommand;
 use LaraInspect\Console\Commands\EnvironmentCommand;
 use LaraInspect\Console\Commands\InspectCommand;
@@ -28,6 +34,12 @@ final class Application extends SymfonyApplication
             new SecurityCommand($services),
             new ArchitectureCommand($services),
             new ReportCommand($services),
+            new AiCommand($services),
+            new AiProvidersCommand($services),
+            new AiModelsCommand($services),
+            new ConfigShowCommand($services),
+            new ConfigInitCommand($services),
+            new ConfigTestCommand($services),
         ]);
     }
 

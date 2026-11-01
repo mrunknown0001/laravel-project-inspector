@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaraInspect\Support;
 
+use LaraInspect\AI\AIConfig;
+use LaraInspect\AI\AIManager;
 use LaraInspect\Analyzers\ArchitectureAnalyzer;
 use LaraInspect\Analyzers\CodeQualityAnalyzer;
 use LaraInspect\Analyzers\ConfigurationAnalyzer;
@@ -35,14 +37,48 @@ final class Services
     /** @var (\Closure(AuditLog, InspectionOptions): ProcessRunnerInterface)|null */
     private ?\Closure $processRunnerFactory = null;
 
+    private ?AIConfig $aiConfig = null;
+
+    /** @var (\Closure(?AuditLog): AIManager)|null */
+    private ?\Closure $aiManagerFactory = null;
+
     public function __construct(
         public readonly Config $config,
+        public readonly string $basePath = '',
     ) {
     }
 
     public static function fromBasePath(string $basePath): self
     {
-        return new self(Config::load($basePath . '/config/app.php'));
+        return new self(Config::load($basePath . '/config/app.php'), $basePath);
+    }
+
+    public function aiConfig(): AIConfig
+    {
+        return $this->aiConfig ??= AIConfig::load($this->basePath);
+    }
+
+    /**
+     * Replaces the AI configuration (tests, or embedding the inspector).
+     */
+    public function useAiConfig(AIConfig $config): void
+    {
+        $this->aiConfig = $config;
+    }
+
+    /**
+     * Replaces how AI managers are built (tests inject a mock HTTP client).
+     *
+     * @param \Closure(?AuditLog): AIManager $factory
+     */
+    public function useAiManagerFactory(\Closure $factory): void
+    {
+        $this->aiManagerFactory = $factory;
+    }
+
+    public function aiManager(?AuditLog $audit = null): AIManager
+    {
+        return $this->aiManagerFactory !== null ? ($this->aiManagerFactory)($audit) : new AIManager($this->aiConfig(), audit: $audit);
     }
 
     public function version(): string

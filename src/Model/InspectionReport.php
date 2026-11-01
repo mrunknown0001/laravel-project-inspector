@@ -17,6 +17,7 @@ final readonly class InspectionReport
     /**
      * @param list<AnalyzerResult> $results
      * @param list<AuditEntry>     $audit
+     * @param list<AIInsight>      $insights AI-generated interpretation; never findings.
      */
     public function __construct(
         public string $inspectorVersion,
@@ -26,7 +27,17 @@ final readonly class InspectionReport
         public array $audit = [],
         public int $durationMs = 0,
         public bool $offline = false,
+        public array $insights = [],
     ) {
+    }
+
+    /**
+     * @param list<AIInsight> $insights
+     * @param list<AuditEntry> $audit
+     */
+    public function withInsights(array $insights, array $audit): self
+    {
+        return new self($this->inspectorVersion, $this->generatedAt, $this->project, $this->results, $audit, $this->durationMs, $this->offline, $insights);
     }
 
     /**
@@ -97,6 +108,7 @@ final readonly class InspectionReport
             ],
             'results' => array_map(static fn (AnalyzerResult $r): array => $r->toArray(), $this->results),
             'audit' => array_map(static fn (AuditEntry $e): array => $e->toArray(), $this->audit),
+            'ai' => array_map(static fn (AIInsight $i): array => $i->toArray(), $this->insights),
         ];
     }
 
@@ -131,6 +143,7 @@ final readonly class InspectionReport
             array_map(AuditEntry::fromArray(...), Arr::listOfArrays($data, 'audit')),
             Arr::int($data, 'duration_ms'),
             Arr::bool($data, 'offline'),
+            array_map(AIInsight::fromArray(...), Arr::listOfArrays($data, 'ai')),
         );
     }
 }

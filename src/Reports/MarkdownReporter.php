@@ -83,6 +83,10 @@ final class MarkdownReporter implements ReporterInterface
             array_push($out, ...$this->section($result));
         }
 
+        if ($report->insights !== []) {
+            array_push($out, ...$this->insights($report));
+        }
+
         if ($report->audit !== []) {
             $out[] = '## Operations';
             $out[] = '';
@@ -111,6 +115,36 @@ final class MarkdownReporter implements ReporterInterface
         $out[] = '_Source labels: **detected** = read directly from project files; **inferred** = derived from constraints, defaults or examples; **unknown** = needs runtime evaluation._';
 
         return implode("\n", $out) . "\n";
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function insights(InspectionReport $report): array
+    {
+        $out = ['## AI-assisted analysis', ''];
+        $out[] = '> **AI-generated content.** Written by a language model from the redacted inspection results above. It can be wrong, and it does not replace the deterministic findings. Verify recommendations before acting on them.';
+        $out[] = '';
+        foreach ($report->insights as $insight) {
+            $out[] = '### ' . self::inline($insight->title);
+            $out[] = '';
+            $out[] = sprintf('_%s · %s · %s_', self::inline($insight->provider), self::inline($insight->model), self::inline($insight->usage->describe()));
+            $out[] = '';
+            if ($insight->error !== null) {
+                $out[] = '> **Not available:** ' . self::inline($insight->error);
+                $out[] = '';
+            }
+            if ($insight->content !== '') {
+                $out[] = self::inline($insight->content);
+                $out[] = '';
+            }
+            foreach ($insight->notes as $note) {
+                $out[] = '> ' . self::inline($note);
+                $out[] = '';
+            }
+        }
+
+        return $out;
     }
 
     /**

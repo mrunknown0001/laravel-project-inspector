@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace LaraInspect\Console\Commands;
 
+use LaraInspect\AI\AIAnalyzer;
+use LaraInspect\AI\PromptBuilder;
+use LaraInspect\AI\Providers\AbstractHttpProvider;
+use LaraInspect\AI\Tasks\TaskCatalog;
 use LaraInspect\Console\ConsoleConfirmation;
 use LaraInspect\Contracts\AnalyzerInterface;
 use LaraInspect\Exception\InspectorException;
@@ -31,6 +35,10 @@ abstract class AbstractInspectionCommand extends Command
 {
     /** Returned when --fail-on is set and a finding meets the threshold. */
     public const EXIT_FINDINGS = 2;
+
+    /** Audit log and redactor of the most recent inspection, reused by the AI step. */
+    protected ?AuditLog $audit = null;
+    protected ?SecretRedactor $redactor = null;
 
     public function __construct(
         protected readonly Services $services,
@@ -95,6 +103,58 @@ abstract class AbstractInspectionCommand extends Command
             ->addOption('offline', null, InputOption::VALUE_NONE, 'Skip checks that contact remote services (Packagist advisories and outdated packages)')
             ->addOption('no-save', null, InputOption::VALUE_NONE, 'Do not write any files (no saved results and no audit log)')
             ->addOption('fail-on', null, InputOption::VALUE_REQUIRED, sprintf('Exit with code %d if any finding is at or above this severity (critical, high, medium, low, info)', self::EXIT_FINDINGS));
+        $this->configureAiOptions();
+    }
+
+    protected function configureAiOptions(): void
+    {
+        $this
+            ->addOption('ai', null, InputOption::VALUE_NONE, 'Add AI-assisted analysis (sends redacted inspection results to the configured provider)')
+            ->addOption('no-ai', null, InputOption::VALUE_NONE, 'Never run AI analysis, even if AI_ENABLED=true')
+            ->addOption('provider', null, InputOption::VALUE_REQUIRED, 'AI provider: ' . implode(', ', $this->services->aiConfig()->providerNames()))
+            ->addOption('model', null, InputOption::VALUE_REQUIRED, 'AI model (overrides <PROVIDER>_MODEL and AI_MODEL)')
+            ->addOption('ai-task', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, sprintf('AI tasks to run (comma-separated or repeated): %s, all. Default: %s', implode(', ', array_keys(TaskCatalog::all())), implode(', ', TaskCatalog::DEFAULT_TASKS)));
+    }
+
+    protected function wantsAi(InputInterface $input): bool
+    {
+        if ((bool) $input->getOption('no-ai')) {
+            return false;
+        }
+
+        return (bool) $input->getOption('ai') || $this->services->aiConfig()->isEnabled();
+    }
+
+    /**
+     * Runs the selected AI tasks and attaches their (AI-generated) output to the report.
+     */
+    protected function runAi(InspectionReport $report, InputInterface $input, OutputInterface $output): InspectionReport
+    {
+        $redactor = $this->redactor ?? new SecretRedactor();
+        $audit = $this->audit ?? new AuditLog($redactor);
+        $tasks = TaskCatalog::select(self::listOption($input, 'ai-task'));
+        $manager = $this->services->aiManager($audit);
+        $provider = $manager->provider(self::stringOption($input, 'provider'), self::stringOption($input, 'model'));
+        $problems = $provider->validateConfiguration();
+        if ($problems !== []) {
+            throw new InspectorException(sprintf('AI provider "%s" is not ready: %s Run "larainspect ai:providers" for details.', $provider->getProviderName(), implode(' ', $problems)));
+        }
+        $config = $provider instanceof AbstractHttpProvider ? $provider->config() : null;
+
+        $progress = $this->progressOutput($output);
+        $progress?->writeln(sprintf(
+            '<fg=gray>Sending redacted inspection results (no source code, no .env) to %s%s for %s...</>',
+            $config->label ?? $provider->getProviderName(),
+            $config !== null ? ' / ' . $config->model : '',
+            implode(', ', array_map(static fn ($t): string => $t->key, $tasks)),
+        ));
+
+        $analyzer = new AIAnalyzer(new PromptBuilder($redactor, $this->services->aiConfig()->maxInputChars()), $redactor);
+        $insights = $analyzer->run($report, $provider, $tasks, static function ($task) use ($progress): void {
+            $progress?->writeln(sprintf('<fg=gray>AI task: %s...</>', $task->key));
+        });
+
+        return InspectionReport::fromArray($redactor->redactArray($report->withInsights($insights, $audit->entries())->toArray()));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -122,6 +182,10 @@ abstract class AbstractInspectionCommand extends Command
         }
 
         $report = $this->inspect($path, $input, $output, $io);
+        if ($this->wantsAi($input)) {
+            $report = $this->runAi($report, $input, $output);
+        }
+        $this->save($report, $input, $output);
         $this->deliver($report, $format, $input, $output, $io);
 
         return $this->exitCode($report, $threshold);
@@ -138,8 +202,8 @@ abstract class AbstractInspectionCommand extends Command
             $this->fixedAnalyzers() === null ? self::listOption($input, 'exclude') : [],
         );
 
-        $redactor = new SecretRedactor();
-        $audit = new AuditLog($redactor);
+        $redactor = $this->redactor = new SecretRedactor();
+        $audit = $this->audit = new AuditLog($redactor);
         if (!$noSave) {
             $store = $this->store($guard->root());
             $store->ensureDirectory();
@@ -166,12 +230,19 @@ abstract class AbstractInspectionCommand extends Command
             },
         );
 
-        if (!$noSave) {
-            $saved = $this->store($guard->root())->write($report, new JsonReporter());
-            $progress?->writeln(sprintf('<fg=gray>Results saved to %s</>', $saved));
-        }
-
         return $report;
+    }
+
+    /**
+     * Saves the results as JSON in the output directory (for "report" and "ai --from").
+     */
+    protected function save(InspectionReport $report, InputInterface $input, OutputInterface $output): void
+    {
+        if ((bool) $input->getOption('no-save')) {
+            return;
+        }
+        $saved = $this->store($report->project->root)->write($report, new JsonReporter());
+        $this->progressOutput($output)?->writeln(sprintf('<fg=gray>Results saved to %s</>', $saved));
     }
 
     protected function deliver(InspectionReport $report, string $format, InputInterface $input, OutputInterface $output, SymfonyStyle $io): void
@@ -241,7 +312,7 @@ abstract class AbstractInspectionCommand extends Command
     /**
      * Progress goes to stderr so stdout stays clean for --output=-.
      */
-    private function progressOutput(OutputInterface $output): ?OutputInterface
+    protected function progressOutput(OutputInterface $output): ?OutputInterface
     {
         if ($output->isQuiet()) {
             return null;

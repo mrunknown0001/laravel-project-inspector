@@ -3,9 +3,9 @@
 A standalone, read-only CLI that inspects existing Laravel projects and generates technical reports.
 It does not need to be installed inside the project it inspects.
 
-> **Status: Phase 3 complete.** All eight analyzers (environment, dependencies, routes, configuration,
-> database, security, architecture, code quality) and terminal/Markdown/HTML/JSON reports work.
-> Optional AI-assisted analysis (Phase 4) is planned.
+> **Status: Phase 4 complete.** Eight analyzers, terminal/Markdown/HTML/JSON reports, and optional
+> AI-assisted analysis through Anthropic, OpenAI, OpenRouter or NoTokenLimit. Phase 5 (final
+> documentation and hardening) is next.
 
 ## Safety guarantees
 
@@ -26,6 +26,10 @@ It does not need to be installed inside the project it inspects.
   disabled. Every command is recorded in `reports/audit.log` and in the report's *Operations* section.
 - **Network use is limited and optional.** Only `composer audit` and `composer outdated` contact
   Packagist (package names and versions only). `--offline` disables both.
+- **AI is off unless you ask for it.** AI providers receive only the redacted inspection results
+  (findings, facts, summaries) - never source code, `.env` files, absolute paths or the audit log.
+  `larainspect ai --dry-run` prints exactly what would be sent. AI output is a separate, labelled
+  section and never adds findings.
 
 ## Requirements
 
@@ -75,6 +79,9 @@ larainspect inspect ./app --only=security,routes   # a selection of analyzers
 larainspect inspect ./app --format=html --output=inspection.html
 larainspect report --format=markdown               # re-render the most recent saved results
 larainspect inspect ./app --fail-on=high           # exit code 2 if HIGH or CRITICAL findings exist (CI)
+larainspect ai ./app --provider=anthropic          # AI explanations, remediation plan, tech-debt summary
+larainspect ai --ai-task=documentation             # AI task over the latest saved results
+larainspect inspect ./app --ai --format=html       # report with an AI section
 ```
 
 `analyze` is an alias of `inspect`.
@@ -90,6 +97,12 @@ larainspect inspect ./app --fail-on=high           # exit code 2 if HIGH or CRIT
 | `security <path>` | Rule-based security checks (see below). |
 | `architecture <path>` | Component inventory, patterns, frontend stack, integrations and an overview. |
 | `report [path]` | Render saved results (latest, or `--from=file.json`), or inspect `path` first. Defaults to Markdown. |
+| `ai [path]` | AI-assisted analysis of a fresh inspection, or of saved results (`--from`, default latest). `--dry-run` sends nothing. |
+| `ai:providers [--check]` | Provider configuration status (keys masked); `--check` calls each model list endpoint. |
+| `ai:models [provider]` | Models offered by a provider (`--filter=text`). |
+| `config:show` | Inspector and AI settings with their source (environment, `.env`, default); keys masked. |
+| `config:init` | Create the inspector's `.env` from `.env.example` (never overwrites; mode 600). |
+| `config:test [provider]` | Validate a provider and send one tiny request containing no project data. |
 
 ### Options
 
@@ -103,6 +116,9 @@ larainspect inspect ./app --fail-on=high           # exit code 2 if HIGH or CRIT
 | `--offline` | Skip Packagist checks. |
 | `--no-save` | Write no files at all (no saved results, no audit log). |
 | `--fail-on=` | Exit with code 2 when a finding is at or above this severity. |
+| `--ai` / `--no-ai` | Add AI analysis to `inspect`/`report`/single-analyzer commands, or never run it (overrides `AI_ENABLED`). |
+| `--provider=` / `--model=` | AI provider and model for this run. |
+| `--ai-task=` | AI tasks: `explain-findings`, `architecture`, `dependencies`, `security-fixes`, `documentation`, `technical-debt`, `best-practices`, `all`. Default: `explain-findings,security-fixes,technical-debt`. Each task is one API request. |
 | `-v` | Verbose output. |
 
 Results are saved as JSON in `./reports` (relative to where you run the command), next to the
@@ -133,6 +149,26 @@ an explanation, evidence and a remediation. Facts are labelled **detected** (rea
 **inferred** (from constraints, defaults or `.env.example`) or **unknown** (needs runtime evaluation).
 
 See [docs/examples](docs/examples) for sample reports generated from the test fixtures.
+
+## AI providers
+
+```bash
+larainspect config:init            # creates .env in the inspector directory (git-ignored)
+# edit .env: set AI_PROVIDER and the provider's API key (and model, except for Anthropic)
+larainspect config:test            # one tiny request, no project data
+larainspect ai /path/to/project
+```
+
+| Provider | `AI_PROVIDER` | Key variable | Default model |
+|---|---|---|---|
+| Anthropic | `anthropic` | `ANTHROPIC_API_KEY` | `claude-opus-5-5` |
+| OpenAI | `openai` | `OPENAI_API_KEY` | none - set `OPENAI_MODEL` |
+| OpenRouter | `openrouter` | `OPENROUTER_API_KEY` | none - set `OPENROUTER_MODEL` |
+| NoTokenLimit | `notokenlimit` | `NOTOKENLIMIT_API_KEY` | none - set `NOTOKENLIMIT_MODEL` |
+
+Every setting can be an environment variable or a line in the inspector's `.env`; environment
+variables win. See [docs/ai-providers.md](docs/ai-providers.md) for all settings, base URL
+overrides, and what each provider receives.
 
 ## Development
 

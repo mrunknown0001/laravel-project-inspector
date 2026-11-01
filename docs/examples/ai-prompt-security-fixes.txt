@@ -1,0 +1,964 @@
+
+AI dry run: nothing will be sent
+================================
+
+security-fixes (52,006 characters)
+----------------------------------
+
+[system]
+You are a senior Laravel engineer reviewing the results of an automated, read-only inspection of a Laravel application. You receive the inspection results as JSON, not the source code.
+
+- Base every statement on the provided data. Do not invent findings, files, packages, versions or vulnerabilities that are not in it.
+- Each finding has a confidence: "confirmed" findings were verified from evidence; "potential" ones need review. Keep that distinction, and say so when you infer something.
+- Refer to findings by their rule id in backticks, for example `sec.debug-in-production`.
+- Secrets were removed before sending ([REDACTED] or masked values). Never guess or ask for credentials.
+- Answer in concise GitHub-flavoured Markdown with short sections, without a preamble.
+
+[user]
+Task: Turn the security-relevant findings into a prioritised remediation plan. For each item give the concrete Laravel-specific fix (configuration change, middleware, code pattern or command), how to verify it, and whether it needs a credential rotation. Treat "potential" findings as things to confirm first. Finish with the order you would do them in during one working day.
+
+Inspection results (JSON):
+```json
+{
+    "project": {
+        "name": "fixture/insecure-app",
+        "framework": "laravel",
+        "laravel_version": "10.48.4",
+        "layout": "legacy"
+    },
+    "inspection": {
+        "inspector_version": "0.1.0",
+        "generated_at": "2026-11-01T13:49:47+00:00",
+        "network_checks": false,
+        "severity_counts": {
+            "CRITICAL": 0,
+            "HIGH": 14,
+            "MEDIUM": 18,
+            "LOW": 14,
+            "INFO": 7
+        }
+    },
+    "analyzers": [
+        {
+            "analyzer": "environment",
+            "title": "Environment",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Laravel version",
+                    "value": "10.48.4",
+                    "source": "detected"
+                },
+                {
+                    "label": "Project layout",
+                    "value": "Classic (HTTP/Console kernels)",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Laravel support status",
+                    "value": "End of life (security fixes ended 2025-02-04)",
+                    "source": "detected"
+                },
+                {
+                    "label": "PHP requirement",
+                    "value": "^8.1",
+                    "source": "detected"
+                },
+                {
+                    "label": "PHP running the inspector",
+                    "value": "8.3.32",
+                    "source": "detected"
+                },
+                {
+                    "label": "Composer version",
+                    "value": "2.10.3",
+                    "source": "detected"
+                },
+                {
+                    "label": "Node.js version",
+                    "value": "22.23.3",
+                    "source": "detected"
+                },
+                {
+                    "label": "npm version",
+                    "value": "10.9.9",
+                    "source": "detected"
+                },
+                {
+                    "label": "pnpm version",
+                    "value": "Not installed",
+                    "source": "detected"
+                },
+                {
+                    "label": "Yarn version",
+                    "value": "Not installed",
+                    "source": "detected"
+                },
+                {
+                    "label": "Bun version",
+                    "value": "Not installed",
+                    "source": "detected"
+                },
+                {
+                    "label": "Application environment",
+                    "value": "production",
+                    "source": "detected"
+                },
+                {
+                    "label": "Debug mode",
+                    "value": "true",
+                    "source": "detected"
+                },
+                {
+                    "label": "Database technology",
+                    "value": "MySQL",
+                    "source": "detected"
+                },
+                {
+                    "label": "Frontend build tool",
+                    "value": "None detected",
+                    "source": "detected"
+                },
+                {
+                    "label": "Frontend package manager",
+                    "value": "None detected",
+                    "source": "detected"
+                },
+                {
+                    "label": "Frontend technologies",
+                    "value": "Blade only",
+                    "source": "detected"
+                }
+            ],
+            "findings": [
+                {
+                    "id": "env.laravel-end-of-life",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "Laravel 10 no longer receives security fixes",
+                    "component": "composer.lock",
+                    "explanation": "Vulnerabilities discovered in this Laravel version will not be patched upstream. This is a maintenance risk, not proof of a current vulnerability.",
+                    "evidence": "Laravel 10 security support ended on 2025-02-04 (https://laravel.com/docs/releases#support-policy).",
+                    "remediation": "Plan an upgrade to a supported Laravel release. Upgrade one major version at a time, following the official upgrade guides."
+                }
+            ],
+            "notes": [],
+            "data": {
+                "laravel": {
+                    "version": "10.48.4",
+                    "major": 10,
+                    "layout": "legacy"
+                },
+                "php": {
+                    "requirement": "^8.1",
+                    "platform_override": null,
+                    "runtime": "8.3.32"
+                },
+                "app": {
+                    "environment": "production",
+                    "debug": "true"
+                },
+                "drivers": {
+                    "database": "mysql",
+                    "cache": "file",
+                    "queue": "sync",
+                    "session": "array",
+                    "log": "stack",
+                    "filesystem": null,
+                    "mail": null,
+                    "broadcast": null
+                },
+                "database_technology": "MySQL",
+                "frontend": {
+                    "build_tool": null,
+                    "build_tool_origin": null,
+                    "package_manager": null,
+                    "package_manager_origin": null,
+                    "technologies": []
+                }
+            }
+        },
+        {
+            "analyzer": "dependencies",
+            "title": "Dependencies",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Direct dependencies",
+                    "value": "3",
+                    "source": "detected"
+                },
+                {
+                    "label": "Direct development dependencies",
+                    "value": "1",
+                    "source": "detected"
+                },
+                {
+                    "label": "composer.lock",
+                    "value": "Present",
+                    "source": "detected"
+                },
+                {
+                    "label": "Locked packages",
+                    "value": "4 (3 production, 1 development)",
+                    "source": "detected"
+                },
+                {
+                    "label": "Installed in vendor/",
+                    "value": "Not installed",
+                    "source": "detected"
+                },
+                {
+                    "label": "Minimum stability",
+                    "value": "stable",
+                    "source": "detected"
+                }
+            ],
+            "findings": [],
+            "notes": [
+                "Offline mode: security advisories and outdated packages were not checked."
+            ],
+            "data": {
+                "require": {
+                    "php": "^8.1",
+                    "barryvdh/laravel-debugbar": "^3.9",
+                    "guzzlehttp/guzzle": "^7.2",
+                    "laravel/framework": "^10.10"
+                },
+                "require_dev": {
+                    "phpunit/phpunit": "^10.1"
+                },
+                "abandoned": [],
+                "advisory_count": 0,
+                "outdated": []
+            }
+        },
+        {
+            "analyzer": "routes",
+            "title": "Routes",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Route source",
+                    "value": "Static analysis (application not booted)",
+                    "source": "detected"
+                },
+                {
+                    "label": "Route files read",
+                    "value": "app/Providers/RouteServiceProvider.php, routes/api.php, routes/web.php",
+                    "source": "detected"
+                },
+                {
+                    "label": "Total routes",
+                    "value": "9",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Web routes",
+                    "value": "6",
+                    "source": "inferred"
+                },
+                {
+                    "label": "API routes",
+                    "value": "3",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Named routes",
+                    "value": "1",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Closure routes",
+                    "value": "2",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Controllers referenced",
+                    "value": "4",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Behind authentication middleware",
+                    "value": "1",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Signed-URL routes",
+                    "value": "0",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Behind custom middleware only",
+                    "value": "0",
+                    "source": "inferred"
+                },
+                {
+                    "label": "Without authentication middleware",
+                    "value": "8",
+                    "source": "inferred"
+                }
+            ],
+            "findings": [
+                {
+                    "id": "routes.duplicate",
+                    "severity": "LOW",
+                    "confidence": "confirmed",
+                    "title": "1 route is registered more than once",
+                    "component": "routes/",
+                    "explanation": "When two routes share a method and URI, the later definition silently replaces the earlier one, so one of them is unreachable.",
+                    "evidence": "- GET admin/users: routes/web.php:10 overrides routes/web.php:9",
+                    "remediation": "Remove or rename one of each pair of duplicate routes."
+                },
+                {
+                    "id": "routes.missing-controller",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "1 controller referenced by routes could not be found",
+                    "component": "routes/",
+                    "explanation": "The controller class does not exist at the path its namespace maps to under composer.json PSR-4 rules. Requests to these routes would fail, unless the class is loaded some other way (classmap, custom autoloader).",
+                    "evidence": "- App\\Http\\Controllers\\SettingsController (used by GET settings, routes/web.php:15)",
+                    "remediation": "Create the controller, fix the namespace in the route definition, or remove the route."
+                }
+            ],
+            "notes": [
+                "Routes were read from source without booting the application. Routes registered by packages (e.g. Telescope, Horizon, Filament, Sanctum) and routes built dynamically are not included; use --use-artisan to list them.",
+                "Installed packages that register their own routes (not listed above): Debugbar."
+            ],
+            "data": {
+                "source": "static",
+                "counts": {
+                    "total": 9,
+                    "api": 3,
+                    "web": 6,
+                    "by_method": {
+                        "DELETE": 1,
+                        "GET": 5,
+                        "POST": 3
+                    },
+                    "by_access": {
+                        "authenticated": 1,
+                        "signed": 0,
+                        "custom": 0,
+                        "public": 8
+                    }
+                }
+            }
+        },
+        {
+            "analyzer": "configuration",
+            "title": "Configuration",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Environment file",
+                    "value": ".env",
+                    "source": "detected"
+                },
+                {
+                    "label": "Environment",
+                    "value": "production",
+                    "source": "detected"
+                },
+                {
+                    "label": "Published config files",
+                    "value": "9",
+                    "source": "detected"
+                }
+            ],
+            "findings": [
+                {
+                    "id": "config.production-array-session",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "Session driver is \"array\" in production",
+                    "component": ".env",
+                    "explanation": "The array driver keeps data only for the current request. Cached values are lost immediately, and with sessions users cannot stay logged in.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); session driver \"array\" (.env: SESSION_DRIVER).",
+                    "remediation": "Use a persistent driver (redis, database, file, memcached) in production."
+                },
+                {
+                    "id": "config.production-sync-queue",
+                    "severity": "LOW",
+                    "confidence": "confirmed",
+                    "title": "Queued jobs run synchronously in production",
+                    "component": ".env",
+                    "explanation": "With the \"sync\" queue connection, queued jobs, mail and notifications run inside the web request. This slows responses, and a failing job fails the request.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); queue connection \"sync\" (.env: QUEUE_CONNECTION).",
+                    "remediation": "Use a real queue backend (database, redis, sqs) in production and run a queue worker."
+                },
+                {
+                    "id": "config.production-debug-logging",
+                    "severity": "LOW",
+                    "confidence": "confirmed",
+                    "title": "Log level is \"debug\" in production",
+                    "component": ".env",
+                    "explanation": "Debug-level logging in production produces large logs and is more likely to record request data, queries or tokens.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); log level \"debug\" (.env: LOG_LEVEL).",
+                    "remediation": "Set LOG_LEVEL to \"info\", \"warning\" or \"error\" in the production environment."
+                },
+                {
+                    "id": "config.env-keys-not-in-example",
+                    "severity": "INFO",
+                    "confidence": "confirmed",
+                    "title": "6 variables in .env are missing from .env.example",
+                    "component": ".env.example",
+                    "explanation": "Variables used locally but absent from .env.example are easy to forget when deploying or onboarding. Only variable names are compared; values are never read.",
+                    "evidence": "- APP_URL\n- SESSION_DRIVER\n- QUEUE_CONNECTION\n- LOG_LEVEL\n- BCRYPT_ROUNDS\n- DEBUGBAR_ENABLED",
+                    "remediation": "Add the missing variable names to .env.example with placeholder values."
+                }
+            ],
+            "notes": [],
+            "data": {
+                "environment": {
+                    "name": "production",
+                    "source": "detected",
+                    "from_env_file": true
+                },
+                "settings": {
+                    "environment": {
+                        "value": "production",
+                        "source": "detected"
+                    },
+                    "debug": {
+                        "value": "true",
+                        "source": "detected"
+                    },
+                    "app.url": {
+                        "value": "https://shop.example.test",
+                        "source": "detected"
+                    },
+                    "app.timezone": {
+                        "value": "UTC",
+                        "source": "detected"
+                    },
+                    "app.locale": {
+                        "value": "en",
+                        "source": "detected"
+                    },
+                    "app.cipher": {
+                        "value": "AES-256-CBC",
+                        "source": "detected"
+                    },
+                    "app.maintenance": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "session": {
+                        "value": "array",
+                        "source": "detected"
+                    },
+                    "session.lifetime": {
+                        "value": "120",
+                        "source": "inferred"
+                    },
+                    "session.encrypt": {
+                        "value": "false",
+                        "source": "detected"
+                    },
+                    "session.secure": {
+                        "value": "null",
+                        "source": "inferred"
+                    },
+                    "session.http_only": {
+                        "value": "false",
+                        "source": "detected"
+                    },
+                    "session.same_site": {
+                        "value": "none",
+                        "source": "detected"
+                    },
+                    "session.expire_on_close": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "cache": {
+                        "value": "file",
+                        "source": "inferred"
+                    },
+                    "queue": {
+                        "value": "sync",
+                        "source": "detected"
+                    },
+                    "queue.failed": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "log": {
+                        "value": "stack",
+                        "source": "inferred"
+                    },
+                    "filesystem": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "auth.guard": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "auth.password_timeout": {
+                        "value": null,
+                        "source": "unknown"
+                    },
+                    "hashing.driver": {
+                        "value": "bcrypt",
+                        "source": "detected"
+                    },
+                    "hashing.bcrypt_rounds": {
+                        "value": "4",
+                        "source": "detected"
+                    },
+                    "log.level": {
+                        "value": "debug",
+                        "source": "detected"
+                    }
+                },
+                "cors": {
+                    "source": "config/cors.php",
+                    "paths": [
+                        "api/*",
+                        "sanctum/csrf-cookie"
+                    ],
+                    "allowed_origins": [
+                        "*"
+                    ],
+                    "allowed_origins_patterns": [],
+                    "allowed_methods": [
+                        "*"
+                    ],
+                    "supports_credentials": true
+                }
+            }
+        },
+        {
+            "analyzer": "security",
+            "title": "Security",
+            "status": "completed",
+            "facts": [
+                {
+                    "label": "Project rules",
+                    "value": "6",
+                    "source": "detected"
+                },
+                {
+                    "label": "Source rules",
+                    "value": "4",
+                    "source": "detected"
+                },
+                {
+                    "label": "Files scanned",
+                    "value": "30",
+                    "source": "detected"
+                },
+                {
+                    "label": "PHP files parsed",
+                    "value": "25",
+                    "source": "detected"
+                },
+                {
+                    "label": "Git tracking",
+                    "value": "Unknown",
+                    "source": "detected"
+                }
+            ],
+            "findings": [
+                {
+                    "id": "sec.debug-in-production",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "Debug mode is enabled in a production environment",
+                    "component": ".env",
+                    "explanation": "With APP_DEBUG=true, error pages show stack traces, configuration values and environment variables, including credentials, to anyone who triggers an error. Older debug page versions have also had remote code execution vulnerabilities.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); APP_DEBUG=true (.env: APP_DEBUG).",
+                    "remediation": "Set APP_DEBUG=false in the production environment and run \"php artisan config:cache\" after deploying."
+                },
+                {
+                    "id": "sec.app-key-missing",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "APP_KEY is not set",
+                    "component": ".env",
+                    "explanation": "Laravel uses APP_KEY to encrypt cookies, sessions and encrypted model attributes. Without it, encryption fails. A key added later invalidates existing encrypted data.",
+                    "evidence": "APP_KEY is defined in .env but empty.",
+                    "remediation": "Generate a key with \"php artisan key:generate\" in each environment, and store it in the environment rather than in code."
+                },
+                {
+                    "id": "sec.app-key-hardcoded",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "The application key is hardcoded in config/app.php",
+                    "component": "config/app.php",
+                    "explanation": "A key written into a committed config file is shared by every environment and everyone with access to the repository.",
+                    "evidence": "'key' => base**** (51 characters)",
+                    "remediation": "Use 'key' => env('APP_KEY'), rotate the exposed key, and set APP_KEY per environment."
+                },
+                {
+                    "id": "sec.cors-wildcard-credentials",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "CORS allows any origin together with credentials",
+                    "component": "config/cors.php",
+                    "explanation": "With supports_credentials enabled, Laravel reflects the requesting origin when allowed_origins is \"*\". Any website could then make authenticated requests with the user's cookies and read the responses.",
+                    "evidence": "'allowed_origins' => ['*'], 'supports_credentials' => true (config/cors.php:supports_credentials)",
+                    "remediation": "List the exact front-end origins in allowed_origins (or allowed_origins_patterns) when credentials are required."
+                },
+                {
+                    "id": "sec.debug-tool-enabled-in-production",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "Laravel Debugbar is enabled in production",
+                    "component": ".env",
+                    "explanation": "Debugbar renders queries, session data and request details into every page.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); DEBUGBAR_ENABLED=true",
+                    "remediation": "Set DEBUGBAR_ENABLED=false in production."
+                },
+                {
+                    "id": "sec.public-sensitive-file",
+                    "severity": "HIGH",
+                    "confidence": "potential",
+                    "title": "Public directory contains 1 database file or dump",
+                    "component": "public/",
+                    "explanation": "Everything under public/ can be downloaded by visitors unless the web server blocks it. A database file or dump there may expose source code, data or credentials.",
+                    "evidence": "- public/backup.sql",
+                    "remediation": "Remove these files from public/ (and from the server), and keep backups and dumps outside the web root."
+                },
+                {
+                    "id": "sec.public-sensitive-file",
+                    "severity": "HIGH",
+                    "confidence": "potential",
+                    "title": "Public directory contains 1 debug or admin script",
+                    "component": "public/",
+                    "explanation": "Everything under public/ can be downloaded by visitors unless the web server blocks it. A debug or admin script there may expose source code, data or credentials.",
+                    "evidence": "- public/phpinfo.php",
+                    "remediation": "Remove these files from public/ (and from the server), and keep backups and dumps outside the web root."
+                },
+                {
+                    "id": "sec.route-phpinfo",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "A public route calls phpinfo()",
+                    "component": "routes/",
+                    "explanation": "phpinfo() prints the PHP configuration, server paths and all environment variables, which in Laravel include database passwords and APP_KEY.",
+                    "evidence": "- GET phpinfo calls phpinfo() (exposes PHP configuration and environment variables), routes/web.php:8",
+                    "remediation": "Remove the route. If PHP configuration must be inspected, do it from the command line."
+                },
+                {
+                    "id": "sec.route-dangerous-closure",
+                    "severity": "HIGH",
+                    "confidence": "potential",
+                    "title": "1 route closure runs dangerous operations without authentication",
+                    "component": "routes/",
+                    "explanation": "These closures run commands, raw SQL, file writes or debug dumps, and no authentication middleware was found on the route. Anyone who can reach the URL can trigger them.",
+                    "evidence": "- GET debug/run calls Artisan::call() (runs Artisan commands), routes/web.php:11",
+                    "remediation": "Remove debug and maintenance routes, or move the logic to Artisan commands. If they must stay, protect them with authentication and authorization middleware."
+                },
+                {
+                    "id": "sec.csrf-disabled",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "CSRF protection is disabled for all routes",
+                    "component": "app/Http/Middleware/VerifyCsrfToken.php",
+                    "explanation": "The CSRF exclusion list contains a wildcard that matches every route. Any website a logged-in user visits can submit forms to the application on their behalf.",
+                    "evidence": "Excluded URIs: *",
+                    "remediation": "Remove the wildcard and exclude only specific endpoints that verify requests another way (e.g. signed webhooks)."
+                },
+                {
+                    "id": "sec.secret-token",
+                    "severity": "HIGH",
+                    "confidence": "confirmed",
+                    "title": "1 value matches a known credential format",
+                    "component": "source code",
+                    "explanation": "These values match the format of real API keys, tokens or private keys. Anyone with access to the code can use them, and once committed they stay in the git history.",
+                    "evidence": "- config/services.php:12: NoTokenLimit API key ntl_**** (29 characters)",
+                    "remediation": "Revoke and rotate each credential, move it to the environment (.env / secret manager), and read it through config()."
+                },
+                {
+                    "id": "sec.command-injection",
+                    "severity": "HIGH",
+                    "confidence": "potential",
+                    "title": "Shell command built with request input (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "A shell command contains request input. If the input is not strictly validated, attackers can run arbitrary commands on the server.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:17: exec('convert ' . $request->input('file') . ' out.pdf');",
+                    "remediation": "Avoid shell commands for user-facing features. Otherwise pass arguments with Symfony Process arrays or escapeshellarg(), and validate input against an allow-list."
+                },
+                {
+                    "id": "sec.sql-injection",
+                    "severity": "HIGH",
+                    "confidence": "potential",
+                    "title": "Raw SQL built with request input (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "Request input is concatenated or passed directly into a raw SQL expression, which allows SQL injection.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:14: $rows = DB::select(\"SELECT * FROM orders WHERE status = '\" . $request->input('status') . \"'\");",
+                    "remediation": "Use query builder methods or bindings: whereRaw(\"email = ?\", [$email]); never concatenate input into SQL."
+                },
+                {
+                    "id": "sec.blade-unescaped-input",
+                    "severity": "HIGH",
+                    "confidence": "potential",
+                    "title": "Request input is echoed without escaping",
+                    "component": "resources/views",
+                    "explanation": "{!! !!} prints raw HTML. Echoing request input this way allows reflected cross-site scripting.",
+                    "evidence": "- resources/views/comments.blade.php:4: {!! request('q') !!}",
+                    "remediation": "Use {{ }} (escaped output) for anything derived from input."
+                },
+                {
+                    "id": "sec.app-key-in-example",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": ".env.example contains an application key",
+                    "component": ".env.example",
+                    "explanation": "Example env files are normally committed. A real key there may be copied into environments, and anyone with the repository could decrypt their data.",
+                    "evidence": "APP_KEY in .env.example is not empty.",
+                    "remediation": "Leave APP_KEY empty in .env.example and generate a unique key per environment with \"php artisan key:generate\". Rotate any key that has been shared."
+                },
+                {
+                    "id": "sec.session-not-http-only",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "Session cookie is readable by JavaScript",
+                    "component": "config/session.php",
+                    "explanation": "With http_only disabled, any cross-site scripting flaw can steal session cookies and take over accounts.",
+                    "evidence": "session.http_only = false (config/session.php:http_only)",
+                    "remediation": "Set 'http_only' => true in config/session.php (the Laravel default)."
+                },
+                {
+                    "id": "sec.session-same-site-none",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "SameSite=None session cookie without the Secure flag",
+                    "component": "config/session.php",
+                    "explanation": "SameSite=None sends the session cookie on cross-site requests, which weakens CSRF protection. Browsers reject SameSite=None cookies that are not also Secure.",
+                    "evidence": "same_site = none (config/session.php:same_site); secure = null (config/session.php:secure (env('SESSION_SECURE_COOKIE') unset, no default))",
+                    "remediation": "Use SameSite \"lax\" (the default) unless cross-site embedding is required; if it is, set SESSION_SECURE_COOKIE=true."
+                },
+                {
+                    "id": "sec.weak-bcrypt-rounds",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "Bcrypt work factor is 4 in production",
+                    "component": ".env",
+                    "explanation": "A low bcrypt cost makes stolen password hashes much faster to crack. Low values are normal in tests, not in production.",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); bcrypt rounds = 4 (.env: BCRYPT_ROUNDS)",
+                    "remediation": "Use at least 12 rounds (the Laravel default) in production; keep low values only in phpunit.xml / .env.testing."
+                },
+                {
+                    "id": "sec.debug-package-in-production",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "Laravel Debugbar is a production dependency",
+                    "component": "composer.json",
+                    "explanation": "Laravel Debugbar is listed under \"require\", so it is installed in production. Debugging tools expose queries, request data and configuration when enabled by mistake.",
+                    "evidence": "\"require\": {\"barryvdh/laravel-debugbar\": \"^3.9\"}",
+                    "remediation": "Move barryvdh/laravel-debugbar to \"require-dev\" (composer require --dev barryvdh/laravel-debugbar) so production installs with --no-dev exclude it."
+                },
+                {
+                    "id": "sec.env-permissions",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": ".env is world-readable",
+                    "component": ".env",
+                    "explanation": "Any local user or process on the server can read the application's credentials.",
+                    "evidence": "Mode 0644",
+                    "remediation": "Restrict it to the owner and the web server group, e.g. chmod 640 .env."
+                },
+                {
+                    "id": "sec.route-sensitive-public",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "4 routes with sensitive-looking paths have no authentication middleware",
+                    "component": "routes/",
+                    "explanation": "The path suggests privileged functionality (admin, settings, export, ...) and no authentication middleware was found at the route, group or controller level. The controller may still check access itself; verify each one.",
+                    "evidence": "- DELETE api/users/{id} (\"users\"; middleware: api), routes/api.php:7\n- GET admin/users (\"admin\"; middleware: web), routes/web.php:9\n- GET admin/users (\"admin\"; middleware: web), routes/web.php:10\n- GET settings (\"settings\"; middleware: web), routes/web.php:15",
+                    "remediation": "Add auth middleware (and authorization such as can: or policies) to the route group, or confirm the endpoint is intentionally public."
+                },
+                {
+                    "id": "sec.secret-literal",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "3 secrets are hardcoded",
+                    "component": "source code",
+                    "explanation": "Passwords, secrets or API keys are written as string literals. Even when the value is only used locally, committed credentials tend to be reused in other environments.",
+                    "evidence": "- app/Services/PaymentService.php:7: 'apiToken' => tok_**** (21 characters)\n- config/services.php:6: 'secret' => Live**** (24 characters)\n- resources/js/app.js:1: stripeSecret = Fron**** (22 characters)",
+                    "remediation": "Replace the literal with env('NAME') in a config file, set the value in each environment, and rotate it if it was ever real."
+                },
+                {
+                    "id": "sec.secret-env-default",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "1 env() default contains a secret",
+                    "component": "source code",
+                    "explanation": "env('X', 'value') falls back to the literal when the variable is missing, so the 'default' quietly becomes the production credential if an environment is misconfigured.",
+                    "evidence": "- config/services.php:9: env('MAILGUN_SECRET', mg-D**** (21 characters))",
+                    "remediation": "Remove the default (env('DB_PASSWORD')) so a missing variable fails loudly, and rotate the value if it is real."
+                },
+                {
+                    "id": "sec.secret-url-credentials",
+                    "severity": "MEDIUM",
+                    "confidence": "confirmed",
+                    "title": "1 URL embeds a password",
+                    "component": "source code",
+                    "explanation": "Connection strings such as redis://user:[REDACTED]@host include the password in source code and in logs that print the URL.",
+                    "evidence": "- config/services.php:14: redis://default:Redi**** (13 characters)@...",
+                    "remediation": "Build the URL from environment variables or pass the password separately."
+                },
+                {
+                    "id": "sec.secret-in-env-variant",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "1 secret-looking value in an env file other than .env",
+                    "component": "source code",
+                    "explanation": "Env files other than .env (.env.example, .env.testing, backups) are often committed, copied or deployed. Real-looking values for sensitive keys there are likely live credentials.",
+                    "evidence": "- .env.backup:2: Old-**** (19 characters) (DB_PASSWORD)",
+                    "remediation": "Replace the values with placeholders (or delete backup copies) and rotate any real credentials."
+                },
+                {
+                    "id": "sec.unsafe-unserialize",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "Unsafe unserialize() of non-literal data (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "unserialize() on attacker-controlled data can instantiate arbitrary classes and trigger gadget chains, leading to remote code execution.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:18: $cart = unserialize($request->cookie('cart'));",
+                    "remediation": "Use json_decode() for data from outside, or pass ['allowed_classes' => false] (or a list of safe classes)."
+                },
+                {
+                    "id": "sec.raw-sql-concatenation",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "Raw SQL assembled by concatenation (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "Raw SQL strings are built by concatenating or interpolating variables. If any of them can come from a user, this is SQL injection.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:16: $users = User::query()->whereRaw(\"email = '$email'\")->get();",
+                    "remediation": "Use ? placeholders with bindings, or query builder methods, instead of string building."
+                },
+                {
+                    "id": "sec.path-or-url-from-input",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "File or URL access using request input (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "A file path or URL comes directly from the request. This can allow path traversal (reading or deleting arbitrary files) or server-side request forgery.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:19: $remote = file_get_contents($request->input('url'));",
+                    "remediation": "Validate input against an allow-list, use basename() / Storage paths you construct yourself, and restrict outbound hosts."
+                },
+                {
+                    "id": "sec.weak-password-hash",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "Fast hash (md5/sha1) applied to a password (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "MD5 and SHA-1 are fast hashes and are unsuitable for passwords; hashes can be cracked quickly after a breach.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:21: $hash = md5($request->password);",
+                    "remediation": "Use Hash::make() / bcrypt() / Argon2id via Laravel's Hash facade, and rehash on login."
+                },
+                {
+                    "id": "sec.model-unguard",
+                    "severity": "MEDIUM",
+                    "confidence": "potential",
+                    "title": "Mass-assignment protection is disabled globally",
+                    "component": "source code",
+                    "explanation": "Model::unguard() turns off $fillable/$guarded for every model. Any code that passes request input to create() or update() can then set any column. It is safe only inside seeders or tests.",
+                    "evidence": "- app/Providers/AppServiceProvider.php:12: Model::unguard()",
+                    "remediation": "Remove Model::unguard() from application code (keep it in seeders), and use $fillable on models."
+                },
+                {
+                    "id": "sec.session-cookie-not-secure",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "Session cookie is not marked Secure in production",
+                    "component": "config/session.php",
+                    "explanation": "The application is served over HTTPS but the session cookie may also be sent over plain HTTP, where it can be intercepted (e.g. on a downgraded or mixed-content request).",
+                    "evidence": "APP_ENV=production (.env: APP_ENV); APP_URL=https://shop.example.test; session.secure = null (config/session.php:secure (env('SESSION_SECURE_COOKIE') unset, no default))",
+                    "remediation": "Set SESSION_SECURE_COOKIE=true in the production environment."
+                },
+                {
+                    "id": "sec.env-variant-present",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "1 environment file variant present in the project root",
+                    "component": "project root",
+                    "explanation": "Copies of .env (production settings, backups) often contain real credentials and are easy to deploy or commit by accident. Whether they are tracked by git could not be determined.",
+                    "evidence": "- .env.backup",
+                    "remediation": "Make sure these files are git-ignored and excluded from deployments, or delete them."
+                },
+                {
+                    "id": "sec.route-api-write-public",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "1 API endpoint changes data without authentication middleware",
+                    "component": "routes/api.php",
+                    "explanation": "POST/PUT/PATCH/DELETE API routes without authentication middleware can be called by anyone. This is sometimes intended (sign-up, contact forms, webhooks with signature checks), so review each route.",
+                    "evidence": "- POST api/orders/{order}/refund -> OrderController@refund, routes/api.php:6",
+                    "remediation": "Protect the routes with auth:sanctum (or another guard), or document why they are public and how they are protected (signatures, rate limiting)."
+                },
+                {
+                    "id": "sec.trust-all-proxies",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "All proxies are trusted",
+                    "component": "app/Http/Middleware/TrustProxies.php",
+                    "explanation": "Trusting every proxy makes Laravel believe the X-Forwarded-For/-Proto/-Host headers of any request. That is correct only behind a load balancer that strips client-supplied headers. Otherwise clients can spoof their IP address (bypassing IP-based rate limits and logs) or the scheme and host.",
+                    "evidence": "proxies = *",
+                    "remediation": "List the load balancer's addresses explicitly, or confirm that the application is reachable only through a proxy that overwrites these headers."
+                },
+                {
+                    "id": "sec.open-redirect",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "Redirect to a URL from request input (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "Redirecting to a user-supplied URL lets attackers craft links on your domain that forward victims to phishing sites.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:25: return redirect($request->input('next'));",
+                    "remediation": "Redirect only to relative paths or an allow-list of hosts (e.g. url()->previous() or named routes)."
+                },
+                {
+                    "id": "sec.mass-assignment-request-all",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "Model writes with all request input (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "Passing $request->all() to create/update/fill relies entirely on the model's $fillable/$guarded configuration to block privileged columns.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:20: User::create($request->all());",
+                    "remediation": "Use $request->validated() from a Form Request, or $request->only([...]) with the expected fields."
+                },
+                {
+                    "id": "sec.model-guarded-empty",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "1 model disables mass-assignment protection",
+                    "component": "app/Models",
+                    "explanation": "With $guarded = [] every attribute can be mass-assigned. This is safe only if the model never receives unfiltered input (e.g. $request->all()).",
+                    "evidence": "- app/Models/User.php:9: User: protected $guarded = [];",
+                    "remediation": "Declare $fillable with the attributes users may set, or make sure only validated data reaches these models."
+                },
+                {
+                    "id": "sec.blade-unescaped-output",
+                    "severity": "LOW",
+                    "confidence": "potential",
+                    "title": "1 Blade expression prints unescaped HTML",
+                    "component": "resources/views",
+                    "explanation": "{!! !!} bypasses escaping. That is fine for HTML the application generates itself, but stored user content (comments, profile fields, rich text) printed this way allows stored XSS.",
+                    "evidence": "- resources/views/comments.blade.php:3: {!! $comment->body !!}",
+                    "remediation": "Use {{ }} unless the value is trusted HTML. For user-supplied rich text, sanitise it on save (e.g. with an HTML purifier) before printing it raw."
+                },
+                {
+                    "id": "sec.debug-statement",
+                    "severity": "INFO",
+                    "confidence": "potential",
+                    "title": "Debug statement left in application code (1 occurrence)",
+                    "component": "source code",
+                    "explanation": "dd(), dump() and var_dump() print internal data to the response and halt or disturb normal output when reached in production.",
+                    "evidence": "- app/Http/Controllers/ReportController.php:23: dd($rows);",
+                    "remediation": "Remove debugging calls before deploying; use logging for diagnostics."
+                }
+            ],
+            "notes": [
+                "Git tracking could not be determined (not a git checkout, git unavailable, or the repository is not trusted by git), so \"committed file\" checks were skipped.",
+                "tests/ is not scanned. Code findings are pattern-based and local to single expressions; they need manual review and do not prove exploitability."
+            ]
+        }
+    ]
+}
+```
+

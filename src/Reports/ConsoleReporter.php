@@ -50,6 +50,10 @@ final class ConsoleReporter
             }
         }
 
+        if ($report->insights !== []) {
+            $this->insights($report, $io);
+        }
+
         if ($verbose && $report->audit !== []) {
             $io->section('Operations');
             $io->table(
@@ -79,6 +83,26 @@ final class ConsoleReporter
             $highest === Severity::Medium => $io->warning($verdict),
             default => $io->note($verdict),
         };
+    }
+
+    public function insights(InspectionReport $report, SymfonyStyle $io): void
+    {
+        $io->section('AI-assisted analysis (AI-generated)');
+        $io->text('<comment>Written by a language model from the redacted inspection results. It can be wrong and does not replace the findings above.</comment>');
+        $io->newLine();
+        foreach ($report->insights as $insight) {
+            $io->writeln(sprintf('<info>%s</info> <fg=gray>(%s · %s · %s)</>', OutputFormatter::escape($insight->title), OutputFormatter::escape($insight->provider), OutputFormatter::escape($insight->model), OutputFormatter::escape($insight->usage->describe())));
+            if ($insight->error !== null) {
+                $io->writeln('<error> Not available </error> ' . OutputFormatter::escape($insight->error));
+            }
+            if ($insight->content !== '') {
+                $io->writeln(OutputFormatter::escape($insight->content));
+            }
+            foreach ($insight->notes as $note) {
+                $io->writeln('<fg=gray>Note:</> ' . OutputFormatter::escape($note));
+            }
+            $io->newLine();
+        }
     }
 
     private function section(AnalyzerResult $result, SymfonyStyle $io, bool $verbose): void

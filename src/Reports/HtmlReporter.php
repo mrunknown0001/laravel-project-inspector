@@ -60,6 +60,9 @@ final class HtmlReporter implements ReporterInterface
         foreach ($report->results as $result) {
             $nav .= sprintf('<a href="#section-%s">%s</a>', self::e($result->analyzer), self::e($result->title));
         }
+        if ($report->insights !== []) {
+            $nav .= '<a href="#ai">AI analysis</a>';
+        }
         if ($report->audit !== []) {
             $nav .= '<a href="#operations">Operations</a>';
         }
@@ -76,6 +79,26 @@ final class HtmlReporter implements ReporterInterface
         $sections = '';
         foreach ($report->results as $result) {
             $sections .= $this->section($result);
+        }
+
+        $ai = '';
+        if ($report->insights !== []) {
+            $ai = '<section id="ai" class="ai"><h2>AI-assisted analysis <span class="badge ai-badge">AI-generated</span></h2>'
+                . '<p class="callout warn">Written by a language model from the redacted inspection results above. It can be wrong, and it does not replace the deterministic findings. Verify recommendations before acting on them.</p>';
+            foreach ($report->insights as $insight) {
+                $ai .= sprintf('<article class="insight"><h3>%s</h3><p class="where">%s · %s · %s</p>', self::e($insight->title), self::e($insight->provider), self::e($insight->model), self::e($insight->usage->describe()));
+                if ($insight->error !== null) {
+                    $ai .= sprintf('<p class="callout">Not available: %s</p>', self::e($insight->error));
+                }
+                if ($insight->content !== '') {
+                    $ai .= sprintf('<div class="ai-text">%s</div>', self::e($insight->content));
+                }
+                foreach ($insight->notes as $note) {
+                    $ai .= sprintf('<p class="callout">%s</p>', self::e($note));
+                }
+                $ai .= '</article>';
+            }
+            $ai .= '</section>';
         }
 
         $operations = '';
@@ -132,6 +155,7 @@ final class HtmlReporter implements ReporterInterface
             </section>
             {$findingsHtml}
             {$sections}
+            {$ai}
             {$operations}
             </main>
             <footer>
@@ -294,6 +318,9 @@ final class HtmlReporter implements ReporterInterface
         .callout.warn { border-color: var(--medium); color: var(--text); background: var(--medium-bg); border-radius: 0 6px 6px 0; padding: 8px 12px; margin: 0 0 18px; }
         .status, .muted { color: var(--muted); }
         footer { color: var(--muted); font-size: .85rem; padding-bottom: 40px; }
+        .ai-badge { background: var(--low-bg); color: var(--low); margin-left: 8px; vertical-align: middle; }
+        .insight { border-top: 1px solid var(--border); padding-top: 6px; margin-top: 14px; }
+        .ai-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .93rem; }
         @media (max-width: 640px) { .meta { grid-template-columns: 1fr; } .meta dt { margin-top: 6px; } .facts th[scope="row"] { width: auto; } }
         CSS;
 }

@@ -71,6 +71,10 @@ final class ReportCommand extends AbstractInspectionCommand
         if ($output->isVerbose()) {
             $io->text(sprintf('<fg=gray>Rendering %s</>', $from));
         }
+        if ((bool) $input->getOption('ai')) {
+            $report = $this->runAi($report, $input, $output);
+            $this->save($report, $input, $output);
+        }
         $this->deliver($report, $format, $input, $output, $io);
 
         return $this->exitCode($report, $failOn !== null ? Severity::fromName($failOn) : null);
