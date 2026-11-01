@@ -204,7 +204,8 @@ final class CommandTest extends TestCase
 
         $refused = $this->runCommand('inspect', ['path' => '.', '--offline' => true]);
         self::assertSame(1, $refused->getStatusCode());
-        self::assertStringContainsString('inside the inspected project', $refused->getDisplay());
+        // Long temp paths (macOS, Windows) make the console wrap the message.
+        self::assertStringContainsString('inside the inspected project', (string) preg_replace('/\s+/', ' ', $refused->getDisplay()));
 
         $explicit = $this->runCommand('inspect', ['path' => '.', '--offline' => true, '--format' => 'markdown', '--output' => 'report.md', '--no-save' => true]);
         self::assertSame(1, $explicit->getStatusCode());

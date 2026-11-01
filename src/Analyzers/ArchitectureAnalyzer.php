@@ -103,7 +103,7 @@ final class ArchitectureAnalyzer implements AnalyzerInterface
         $services = $context->config()->keys('services');
 
         $views = count($context->files->findFiles('resources/views', ['php']));
-        $inertiaPages = count($context->files->findFiles('resources/js/Pages')) + count($context->files->findFiles('resources/js/pages'));
+        $inertiaPages = $this->inertiaPageCount($context);
         $frontend = [];
         if ($count('Livewire components') > 0 || $has('livewire/livewire')) {
             $frontend[] = sprintf('Livewire (%s)', Evidence::plural($count('Livewire components'), 'component'));
@@ -188,6 +188,24 @@ final class ArchitectureAnalyzer implements AnalyzerInterface
                 'outbound_http' => ['http_facade' => $index->usage('http'), 'guzzle' => $index->usage('guzzle')],
             ],
         );
+    }
+
+    /**
+     * Inertia pages live in resources/js/Pages (or pages). On case-insensitive file systems
+     * (Windows, macOS) both names are the same directory, so each one is counted once.
+     */
+    private function inertiaPageCount(InspectionContext $context): int
+    {
+        $caseInsensitive = in_array(PHP_OS_FAMILY, ['Windows', 'Darwin'], true);
+        $directories = [];
+        foreach (['resources/js/Pages', 'resources/js/pages'] as $directory) {
+            if ($context->files->isDirectory($directory)) {
+                $real = (string) realpath($context->root() . DIRECTORY_SEPARATOR . $directory);
+                $directories[$caseInsensitive ? mb_strtolower($real) : $real] = $directory;
+            }
+        }
+
+        return array_sum(array_map(static fn (string $d): int => count($context->files->findFiles($d)), $directories));
     }
 
     /**

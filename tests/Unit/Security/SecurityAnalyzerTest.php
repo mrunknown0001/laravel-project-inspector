@@ -238,11 +238,14 @@ final class SecurityAnalyzerTest extends TestCase
     public function testPermissionsAreSkippedOnWindowsBackedMounts(): void
     {
         $root = $this->project(['.env' => 'APP_ENV=production']);
-        $mounts = "/dev/sdc / ext4 rw 0 0\nC:\\134 " . dirname($root) . " 9p rw,dirsync,aname=drvfs 0 0\n";
 
-        $rule = new PermissionsRule($mounts, false);
-        self::assertSame([], $rule->check(Fixtures::context($root)));
-        self::assertStringContainsString('9p mount', (string) $rule->skipReason());
+        // /proc/mounts only exists on Linux; simulating it needs POSIX paths.
+        if (DIRECTORY_SEPARATOR === '/') {
+            $mounts = "/dev/sdc / ext4 rw 0 0\nC:\\134 " . dirname($root) . " 9p rw,dirsync,aname=drvfs 0 0\n";
+            $rule = new PermissionsRule($mounts, false);
+            self::assertSame([], $rule->check(Fixtures::context($root)));
+            self::assertStringContainsString('9p mount', (string) $rule->skipReason());
+        }
 
         $windows = new PermissionsRule('', true);
         self::assertSame([], $windows->check(Fixtures::context($root)));

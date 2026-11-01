@@ -96,7 +96,7 @@ final class AIConfigTest extends TestCase
         self::assertSame('openrouter', AIConfig::load($base, $env)->defaultProvider());
 
         file_put_contents($base . '/.env', "AI_PROVIDER=openai\n");
-        self::assertSame($base . '/.env', AIConfig::settingsFile($base, $env), 'The inspector directory wins over the per-user file.');
+        self::assertSame($base . DIRECTORY_SEPARATOR . '.env', AIConfig::settingsFile($base, $env), 'The inspector directory wins over the per-user file.');
 
         $explicit = $this->tempDir() . '/custom.env';
         file_put_contents($explicit, "AI_PROVIDER=anthropic\n");
